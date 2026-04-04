@@ -36,7 +36,7 @@ header {
     cursor: pointer;
 }
 
-/* FIX */
+/* hide all categories */
 .category { display: none; }
 
 .card {
@@ -48,10 +48,7 @@ header {
     text-align: center;
 }
 
-img {
-    width: 100%;
-    border-radius: 10px;
-}
+img { width: 100%; border-radius: 10px; }
 
 .btn {
     background: green;
@@ -169,8 +166,8 @@ Open in Google Maps
 © Siri Home Foods
 </div>
 
-<!-- FLOAT WHATSAPP (APP FIRST) -->
-<a href="whatsapp://send?phone=919848305086"
+<!-- FLOAT WHATSAPP -->
+<a href="intent://send?phone=919848305086#Intent;scheme=whatsapp;package=com.whatsapp;end"
 style="position:fixed; bottom:20px; right:20px; background:green; color:white; padding:15px; border-radius:50%;">
 💬
 </a>
@@ -179,19 +176,19 @@ style="position:fixed; bottom:20px; right:20px; background:green; color:white; p
 
 let cart = [];
 
-/* CATEGORY */
+/* CATEGORY SWITCH */
 function showCategory(cat) {
     document.querySelectorAll(".category").forEach(c => c.style.display = "none");
     document.getElementById(cat).style.display = "block";
 }
 
-/* ADD */
+/* ADD TO CART */
 function addToCart(name, price) {
     cart.push({name, price});
     displayCart();
 }
 
-/* DISPLAY */
+/* DISPLAY CART */
 function displayCart() {
     let list = document.getElementById("cartList");
     let total = 0;
@@ -206,25 +203,25 @@ function displayCart() {
     document.getElementById("total").innerText = total;
 }
 
-/* REMOVE */
+/* REMOVE ITEM */
 function removeItem(i) {
     cart.splice(i,1);
     displayCart();
 }
 
-/* WHATSAPP ORDER (APP FIRST) */
+/* SEND ORDER → WHATSAPP APP */
 function sendOrder() {
 
     let name = document.getElementById("name").value;
     let phone = document.getElementById("phone").value;
 
     if(cart.length === 0){
-        alert("Cart is empty");
+        alert("Cart empty");
         return;
     }
 
     if(name === "" || phone === ""){
-        alert("Enter name & phone");
+        alert("Name & Phone enter cheyyandi");
         return;
     }
 
@@ -239,21 +236,20 @@ function sendOrder() {
     let encodedMsg = encodeURIComponent(msg);
     let number = "919848305086";
 
-    let appUrl = "whatsapp://send?phone=" + number + "&text=" + encodedMsg;
+    // ANDROID → DIRECT APP
+    let appUrl = "intent://send?phone=" + number + "&text=" + encodedMsg + "#Intent;scheme=whatsapp;package=com.whatsapp;end";
+
+    // fallback
     let webUrl = "https://wa.me/" + number + "?text=" + encodedMsg;
 
-    // TRY APP
     window.location.href = appUrl;
 
-    // FALLBACK
     setTimeout(() => {
         window.open(webUrl, "_blank");
     }, 2000);
 
     cart = [];
     displayCart();
-    document.getElementById("name").value = "";
-    document.getElementById("phone").value = "";
 }
 
 </script>
