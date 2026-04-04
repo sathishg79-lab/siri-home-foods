@@ -9,34 +9,34 @@
 body {
     font-family: Arial;
     margin: 0;
-    background: #f5f5f5;
+    background: #f2f2f2;
 }
 
 /* HEADER */
 header {
     background: linear-gradient(to right, orange, red);
     color: white;
-    padding: 20px;
+    padding: 25px;
     text-align: center;
 }
 
 /* CONTAINER */
 .container {
-    max-width: 600px;
+    max-width: 500px;
     margin: auto;
-    padding: 10px;
+    padding: 15px;
 }
 
 /* CATEGORY BUTTONS */
 .category-bar {
     display: flex;
     gap: 10px;
-    overflow-x: auto;
-    padding: 10px;
+    justify-content: center;
+    margin-bottom: 15px;
 }
 
 .category-bar button {
-    padding: 10px 15px;
+    padding: 8px 15px;
     border: none;
     background: orange;
     color: white;
@@ -47,21 +47,24 @@ header {
 /* GRID */
 .category {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 15px;
 }
 
 /* CARD */
 .card {
     background: white;
-    padding: 10px;
-    border-radius: 10px;
+    padding: 15px;
+    border-radius: 12px;
     text-align: center;
-    box-shadow: 0 2px 6px gray;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
 }
 
+/* IMAGE */
 img {
     width: 100%;
+    max-height: 150px;
+    object-fit: cover;
     border-radius: 10px;
 }
 
@@ -70,27 +73,40 @@ img {
     background: green;
     color: white;
     padding: 10px;
-    margin-top: 5px;
-    display: block;
-    text-decoration: none;
-    border-radius: 5px;
+    border-radius: 6px;
+    border: none;
+    margin-top: 10px;
     cursor: pointer;
 }
 
 /* CART */
 .cart {
     background: white;
-    padding: 10px;
+    padding: 15px;
     margin-top: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.cart ul {
+    padding-left: 20px;
+}
+
+.cart button {
+    margin-left: 10px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 /* FOOTER */
 .footer {
     text-align: center;
+    padding: 15px;
     background: black;
     color: white;
-    padding: 15px;
     margin-top: 20px;
 }
 </style>
@@ -152,31 +168,8 @@ img {
 <button class="btn" onclick="sendCart()">Order via WhatsApp</button>
 </div>
 
-<!-- PAYMENT -->
-<div class="card">
-<h3>💰 Pay Now</h3>
-<a class="btn" href="upi://pay?pa=sathishgandhamalla@ybl&pn=SiriHomeFoods&cu=INR">
-Pay via UPI
-</a>
 </div>
 
-<!-- LOCATION -->
-<div class="card">
-<h3>📍 Location</h3>
-
-<iframe 
-src="https://www.google.com/maps?q=17.4064993,78.5987009&output=embed"
-width="100%" height="200" style="border:0;">
-</iframe>
-
-<a class="btn" href="https://www.google.com/maps/place/Chilukuri+nilayam" target="_blank">
-Open in Google Maps
-</a>
-</div>
-
-</div>
-
-<!-- FOOTER -->
 <div class="footer">
 📞 9848305086 <br>
 © Siri Home Foods
@@ -192,10 +185,9 @@ style="position:fixed; bottom:20px; right:20px; background:green; color:white; p
 
 let cart = [];
 
-/* CATEGORY */
+/* CATEGORY SWITCH */
 function showCategory(cat) {
-    let categories = document.querySelectorAll(".category");
-    categories.forEach(c => c.style.display = "none");
+    document.querySelectorAll(".category").forEach(c => c.style.display = "none");
     document.getElementById(cat).style.display = "grid";
 }
 
@@ -209,7 +201,6 @@ function addToCart(name, price) {
 function displayCart() {
     let list = document.getElementById("cartList");
     let total = 0;
-
     list.innerHTML = "";
 
     cart.forEach((item, index) => {
@@ -225,7 +216,7 @@ function displayCart() {
     document.getElementById("total").innerText = total;
 }
 
-/* REMOVE */
+/* REMOVE ITEM */
 function removeItem(index) {
     cart.splice(index,1);
     displayCart();
@@ -233,27 +224,18 @@ function removeItem(index) {
 
 /* WHATSAPP ORDER */
 function sendCart() {
-
     if(cart.length === 0){
         alert("Cart is empty");
         return;
     }
 
-    let message = "🛒 *Siri Home Foods Order*%0A%0A";
+    let message = "🛒 Siri Home Foods Order%0A%0A";
 
     cart.forEach(item => {
-        message += "• " + item.name + " - ₹" + item.price + "%0A";
+        message += item.name + " - ₹" + item.price + "%0A";
     });
 
-    let phone = "919848305086";
-
-    let isMobile = /Android|iPhone/i.test(navigator.userAgent);
-
-    let url = isMobile
-        ? "https://wa.me/" + phone + "?text=" + message
-        : "https://web.whatsapp.com/send?phone=" + phone + "&text=" + message;
-
-    window.open(url, "_blank");
+    window.open("https://wa.me/919848305086?text=" + message, "_blank");
 
     cart = [];
     displayCart();
