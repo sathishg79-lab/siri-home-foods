@@ -20,24 +20,25 @@ header {
     text-align: center;
 }
 
-/* SECTION */
-section {
-    padding: 20px;
+/* CONTAINER */
+.container {
+    max-width: 500px;
+    margin: auto;
+    padding: 10px;
 }
 
-/* CARD DESIGN */
+/* CARD */
 .card {
     background: white;
-    margin: 15px;
     padding: 15px;
+    margin: 15px 0;
     border-radius: 10px;
-    box-shadow: 0 2px 8px gray;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
-/* IMAGES */
+/* IMAGE */
 img {
     width: 100%;
-    max-width: 250px;
     border-radius: 10px;
 }
 
@@ -45,27 +46,37 @@ img {
 .btn {
     background: green;
     color: white;
-    padding: 10px 20px;
-    text-decoration: none;
+    padding: 12px;
+    border: none;
     border-radius: 5px;
-    display: inline-block;
+    width: 100%;
     margin-top: 10px;
+    cursor: pointer;
 }
 
-/* FORM */
+/* INPUT */
 input, select {
-    width: 90%;
-    max-width: 300px;
+    width: 100%;
     padding: 10px;
-    margin: 5px;
+    margin: 6px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* RADIO */
+.radio-group {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 0;
 }
 
 /* FOOTER */
 .footer {
     text-align: center;
+    padding: 15px;
     background: black;
     color: white;
-    padding: 15px;
+    margin-top: 20px;
 }
 </style>
 
@@ -78,7 +89,9 @@ input, select {
     <p>Fresh • Healthy • Homemade</p>
 </header>
 
-<section>
+<div class="container">
+
+<!-- ITEMS -->
 <h2 style="text-align:center;">Our Special Items</h2>
 
 <div class="card">
@@ -99,64 +112,66 @@ input, select {
 <p>₹400/kg</p>
 </div>
 
-</section>
-
-<section>
+<!-- ORDER FORM -->
 <h2 style="text-align:center;">Place Your Order</h2>
 
-<form onsubmit="sendToWhatsApp(); return false;" class="card">
+<form class="card" onsubmit="sendToWhatsApp(); return false;">
 
-<input type="text" id="name" placeholder="Your Name" required><br>
-<input type="tel" id="phone" placeholder="Phone Number" required><br>
+<input type="text" id="name" placeholder="Your Name" required>
 
-<!-- DROPDOWN -->
+<input type="tel" id="phone" placeholder="Phone Number" required>
+
 <select id="item">
 <option>Mango Pickle</option>
 <option>Gongura Pickle</option>
 <option>Laddu</option>
 <option>Murukulu</option>
-</select><br>
+</select>
 
-<!-- RADIO BUTTONS -->
 <p><b>Select Quantity:</b></p>
 
-<input type="radio" name="qty" value="1 kg"> 1 kg  
-<input type="radio" name="qty" value="2 kg"> 2 kg  
-<input type="radio" name="qty" value="5 kg"> 5 kg  
-
-<br><br>
+<div class="radio-group">
+<label><input type="radio" name="qty" value="1 kg"> 1 kg</label>
+<label><input type="radio" name="qty" value="2 kg"> 2 kg</label>
+<label><input type="radio" name="qty" value="5 kg"> 5 kg</label>
+</div>
 
 <button class="btn" type="submit">Submit Order</button>
 
 </form>
-</section>
 
-<section style="text-align:center;">
-<h2>Quick Order</h2>
+<!-- QUICK ORDER -->
+<div class="card">
+<h3>Quick Order</h3>
 <a class="btn" href="https://wa.me/919848305086">Order on WhatsApp</a>
-</section>
+</div>
 
-<section style="text-align:center;">
-<h2>Pay Now</h2>
+<!-- PAYMENT -->
+<div class="card">
+<h3>Pay Now</h3>
 <a class="btn" href="upi://pay?pa=sathishgandhamalla@ybl&pn=SiriHomeFoods&cu=INR">
 💰 Pay via UPI
 </a>
-</section>
+</div>
 
-<section style="text-align:center;">
-<h2>Location</h2>
+<!-- LOCATION -->
+<div class="card">
+<h3>Location</h3>
 
 <iframe 
 src="https://www.google.com/maps?q=17.4064993,78.5987009&output=embed"
-width="300" height="200" style="border:0;">
-</iframe><br><br>
+width="100%" height="200" style="border:0;">
+</iframe>
 
 <a class="btn" href="https://www.google.com/maps/place/Chilukuri+nilayam" target="_blank">
 📍 Open in Google Maps
 </a>
 
-</section>
+</div>
 
+</div>
+
+<!-- FOOTER -->
 <div class="footer">
 📞 9848305086 <br>
 © Siri Home Foods
@@ -168,6 +183,7 @@ style="position:fixed; bottom:20px; right:20px; background:green; color:white; p
 💬
 </a>
 
+<!-- SCRIPT -->
 <script>
 function sendToWhatsApp() {
 
@@ -191,8 +207,10 @@ function sendToWhatsApp() {
 
     window.open(url, "_blank");
 
-    // ✅ RESET FORM (IMPORTANT)
+    // RESET FORM
     document.querySelector("form").reset();
+
+    alert("Order sent successfully!");
 }
 </script>
 
