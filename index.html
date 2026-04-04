@@ -21,6 +21,7 @@ header {
     padding: 10px;
 }
 
+/* CATEGORY BUTTONS */
 .category-bar {
     display: flex;
     gap: 10px;
@@ -37,12 +38,14 @@ header {
     cursor: pointer;
 }
 
+/* CATEGORY GRID */
 .category {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
 
+/* CARD */
 .card {
     background: white;
     padding: 10px;
@@ -51,11 +54,9 @@ header {
     box-shadow: 0 2px 5px gray;
 }
 
-img {
-    width: 100%;
-    border-radius: 10px;
-}
+img { width: 100%; border-radius: 10px; }
 
+/* BUTTON */
 .btn {
     background: green;
     color: white;
@@ -67,6 +68,7 @@ img {
     cursor: pointer;
 }
 
+/* CART */
 .cart {
     background: white;
     padding: 10px;
@@ -74,6 +76,13 @@ img {
     border-radius: 10px;
 }
 
+.footer {
+    text-align: center;
+    background: black;
+    color: white;
+    padding: 15px;
+    margin-top: 20px;
+}
 </style>
 </head>
 
@@ -134,21 +143,31 @@ img {
 
 </div>
 
+<div class="footer">
+📞 9848305086 <br>
+© Siri Home Foods
+</div>
+
+<!-- FLOAT WHATSAPP -->
+<a href="https://wa.me/919848305086" 
+style="position:fixed; bottom:20px; right:20px; background:green; color:white; padding:15px; border-radius:50%;">
+💬
+</a>
+
 <script>
 
 let cart = [];
 
-/* CATEGORY SWITCH */
+/* SWITCH CATEGORY */
 function showCategory(cat) {
     let categories = document.querySelectorAll(".category");
     categories.forEach(c => c.style.display = "none");
-
     document.getElementById(cat).style.display = "grid";
 }
 
 /* ADD TO CART */
 function addToCart(name, price) {
-    cart.push({name: name, price: price});
+    cart.push({name, price});
     displayCart();
 }
 
@@ -178,7 +197,7 @@ function removeItem(index) {
     displayCart();
 }
 
-/* SEND WHATSAPP */
+/* SEND ORDER */
 function sendCart() {
     if(cart.length === 0){
         alert("Cart is empty");
