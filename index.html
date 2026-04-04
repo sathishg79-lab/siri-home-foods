@@ -7,6 +7,7 @@
 <style>
 body { font-family: Arial; margin: 0; background: #f2f2f2; }
 
+/* HEADER */
 header {
     background: linear-gradient(to right, orange, red);
     color: white;
@@ -14,6 +15,7 @@ header {
     text-align: center;
 }
 
+/* CONTAINER */
 .container {
     max-width: 500px;
     margin: auto;
@@ -25,6 +27,7 @@ header {
     display: flex;
     justify-content: center;
     gap: 10px;
+    margin-bottom: 10px;
 }
 
 .category-bar button {
@@ -33,6 +36,7 @@ header {
     background: orange;
     color: white;
     border-radius: 20px;
+    cursor: pointer;
 }
 
 /* CARD */
@@ -61,15 +65,8 @@ img {
     cursor: pointer;
 }
 
-/* FORM */
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-}
-
 /* CART */
-.cart ul { padding-left: 20px; }
+.cart ul { padding-left: 20px; text-align:left; }
 
 /* FOOTER */
 .footer {
@@ -91,15 +88,15 @@ input, select {
 
 <div class="container">
 
-<!-- CATEGORY -->
+<!-- CATEGORY BUTTONS -->
 <div class="category-bar">
 <button onclick="showCategory('pickles')">Pickles</button>
 <button onclick="showCategory('sweets')">Sweets</button>
 <button onclick="showCategory('snacks')">Snacks</button>
 </div>
 
-<!-- ITEMS -->
-<div id="pickles">
+<!-- PICKLES -->
+<div id="pickles" class="category">
 <div class="card">
 <img src="images/pickle.jpg">
 <h3>Mango Pickle</h3>
@@ -108,29 +105,41 @@ input, select {
 </div>
 </div>
 
+<!-- SWEETS -->
+<div id="sweets" class="category" style="display:none;">
+<div class="card">
+<img src="images/sweets.jpg">
+<h3>Laddu</h3>
+<p>₹400/kg</p>
+<button class="btn" onclick="addToCart('Laddu',400)">Add to Cart</button>
+</div>
+</div>
+
+<!-- SNACKS -->
+<div id="snacks" class="category" style="display:none;">
+<div class="card">
+<img src="images/snacks.jpg">
+<h3>Murukulu</h3>
+<p>₹400/kg</p>
+<button class="btn" onclick="addToCart('Murukulu',400)">Add to Cart</button>
+</div>
+</div>
+
 <!-- CART -->
 <div class="card cart">
 <h2>🛒 Cart</h2>
 <ul id="cartList"></ul>
 <p><b>Total: ₹<span id="total">0</span></b></p>
-
-<button class="btn" onclick="sendCart()">Order via WhatsApp</button>
 </div>
 
-<!-- ORDER FORM -->
+<!-- ORDER DETAILS -->
 <div class="card">
-<h3>Place Order Details</h3>
+<h3>Place Order</h3>
 
-<input type="text" id="name" placeholder="Your Name">
-<input type="tel" id="phone" placeholder="Phone Number">
+<input type="text" id="name" placeholder="Your Name" required>
+<input type="tel" id="phone" placeholder="Phone Number" required>
 
-<select id="qty">
-<option>1 kg</option>
-<option>2 kg</option>
-<option>5 kg</option>
-</select>
-
-<button class="btn" onclick="sendForm()">Send Order</button>
+<button class="btn" onclick="sendOrder()">Place Order</button>
 </div>
 
 <!-- PAYMENT -->
@@ -146,12 +155,13 @@ Pay via UPI
 <h3>📍 Location</h3>
 
 <iframe 
-src="https://www.google.com/maps?q=17.4064993,78.5987009&output=embed"
+src="https://www.google.com/maps?q=17.4064993,78.5987009&z=17&output=embed"
 width="100%" height="200" style="border:0;">
 </iframe>
 
-<a class="btn" href="https://www.google.com/maps/place/Chilukuri+nilayam" target="_blank">
-<a class="btn" href="https://www.google.com/maps/place/Chilukuri+nilayam/@17.406515,78.5965089,367m/data=!3m1!1e3!4m6!3m5!1s0x3bcb9fb80e27c15b:0xc18d38d01e783a8!8m2!3d17.4064993!4d78.5987009!16s%2Fg%2F11lr101wzz?entry=ttu&g_ep=EgoyMDI2MDQwMS4wIKXMDSoASAFQAw%3D%3D">    
+<a class="btn" 
+href="https://maps.google.com/?q=17.4064993,78.5987009" 
+target="_blank">
 Open in Google Maps
 </a>
 </div>
@@ -173,13 +183,19 @@ style="position:fixed; bottom:20px; right:20px; background:green; color:white; p
 
 let cart = [];
 
+/* CATEGORY SWITCH */
+function showCategory(cat) {
+    document.querySelectorAll(".category").forEach(c => c.style.display = "none");
+    document.getElementById(cat).style.display = "block";
+}
+
 /* ADD CART */
 function addToCart(name, price) {
     cart.push({name, price});
     displayCart();
 }
 
-/* DISPLAY */
+/* DISPLAY CART */
 function displayCart() {
     let list = document.getElementById("cartList");
     let total = 0;
@@ -188,62 +204,47 @@ function displayCart() {
     cart.forEach((item, i) => {
         total += item.price;
 
-        list.innerHTML += item.name + " - ₹" + item.price +
-        " <button onclick='removeItem("+i+")'>❌</button><br>";
+        list.innerHTML += "<li>" + item.name + " - ₹" + item.price +
+        " <button onclick='removeItem("+i+")'>❌</button></li>";
     });
 
     document.getElementById("total").innerText = total;
 }
 
-/* REMOVE */
+/* REMOVE ITEM */
 function removeItem(i) {
     cart.splice(i,1);
     displayCart();
 }
 
-/* CART ORDER */
-<script>
-function sendCart() {
+/* SEND ORDER */
+function sendOrder() {
+
+    let name = document.getElementById("name").value;
+    let phone = document.getElementById("phone").value;
 
     if(cart.length === 0){
         alert("Cart is empty");
         return;
     }
 
-    let message = "🛒 *Siri Home Foods Order* %0A%0A";
+    let msg = "🛒 Siri Home Foods Order%0A%0A";
+    msg += "Name: " + name + "%0A";
+    msg += "Phone: " + phone + "%0A%0A";
 
     cart.forEach(item => {
-        message += "• " + item.name + " - ₹" + item.price + "%0A";
+        msg += item.name + " - ₹" + item.price + "%0A";
     });
 
-    let phone = "919848305086";
+    window.open("https://wa.me/919848305086?text=" + msg);
 
-    // MOBILE + DESKTOP SUPPORT
-    let isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    let url;
-
-    if(isMobile){
-        url = "https://wa.me/" + phone + "?text=" + message;
-    } else {
-        url = "https://web.whatsapp.com/send?phone=" + phone + "&text=" + message;
-    }
-
-    window.open(url, "_blank");
-
+    /* CLEAR AFTER ORDER */
     cart = [];
     displayCart();
-}
-</script>
-/* FORM ORDER */
-function sendForm() {
-    let name = document.getElementById("name").value;
-    let phone = document.getElementById("phone").value;
-    let qty = document.getElementById("qty").value;
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
 
-    let msg = "Order Details:%0AName: "+name+"%0APhone: "+phone+"%0AQty: "+qty;
-
-    window.open("https://wa.me/919848305086?text=" + msg);
+    alert("Order sent to WhatsApp!");
 }
 
 </script>
