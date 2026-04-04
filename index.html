@@ -15,7 +15,11 @@ header {
     text-align: center;
 }
 
-.container { max-width: 600px; margin: auto; padding: 10px; }
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 10px;
+}
 
 .category-bar {
     display: flex;
@@ -30,6 +34,7 @@ header {
     background: orange;
     color: white;
     border-radius: 20px;
+    cursor: pointer;
 }
 
 .category {
@@ -43,9 +48,13 @@ header {
     padding: 10px;
     border-radius: 10px;
     text-align: center;
+    box-shadow: 0 2px 5px gray;
 }
 
-img { width: 100%; border-radius: 10px; }
+img {
+    width: 100%;
+    border-radius: 10px;
+}
 
 .btn {
     background: green;
@@ -55,6 +64,7 @@ img { width: 100%; border-radius: 10px; }
     display: block;
     text-decoration: none;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .cart {
@@ -76,7 +86,7 @@ img { width: 100%; border-radius: 10px; }
 
 <div class="container">
 
-<!-- CATEGORY -->
+<!-- CATEGORY BUTTONS -->
 <div class="category-bar">
 <button onclick="showCategory('pickles')">Pickles</button>
 <button onclick="showCategory('sweets')">Sweets</button>
@@ -128,45 +138,49 @@ img { width: 100%; border-radius: 10px; }
 
 let cart = [];
 
+/* CATEGORY SWITCH */
 function showCategory(cat) {
-    let categories = document.getElementsByClassName("category");
-    for (let i=0; i<categories.length; i++) {
-        categories[i].style.display = "none";
-    }
+    let categories = document.querySelectorAll(".category");
+    categories.forEach(c => c.style.display = "none");
+
     document.getElementById(cat).style.display = "grid";
 }
 
+/* ADD TO CART */
 function addToCart(name, price) {
-    cart.push({name, price});
+    cart.push({name: name, price: price});
     displayCart();
 }
 
+/* DISPLAY CART */
 function displayCart() {
     let list = document.getElementById("cartList");
-    list.innerHTML = "";
-
     let total = 0;
+
+    list.innerHTML = "";
 
     cart.forEach((item, index) => {
         total += item.price;
 
-        list.innerHTML += `
-        <li>
-            ${item.name} - ₹${item.price}
-            <button onclick="removeItem(${index})">❌</button>
-        </li>`;
+        let li = document.createElement("li");
+        li.innerHTML = item.name + " - ₹" + item.price +
+        " <button onclick='removeItem("+index+")'>❌</button>";
+
+        list.appendChild(li);
     });
 
     document.getElementById("total").innerText = total;
 }
 
+/* REMOVE ITEM */
 function removeItem(index) {
     cart.splice(index,1);
     displayCart();
 }
 
+/* SEND WHATSAPP */
 function sendCart() {
-    if(cart.length == 0){
+    if(cart.length === 0){
         alert("Cart is empty");
         return;
     }
