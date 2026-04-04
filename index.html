@@ -36,7 +36,6 @@ header {
     cursor: pointer;
 }
 
-/* hide all categories */
 .category { display: none; }
 
 .card {
@@ -167,7 +166,7 @@ Open in Google Maps
 </div>
 
 <!-- FLOAT WHATSAPP -->
-<a href="intent://send?phone=919848305086#Intent;scheme=whatsapp;package=com.whatsapp;end"
+<a href="whatsapp://send?phone=919848305086"
 style="position:fixed; bottom:20px; right:20px; background:green; color:white; padding:15px; border-radius:50%;">
 💬
 </a>
@@ -176,19 +175,19 @@ style="position:fixed; bottom:20px; right:20px; background:green; color:white; p
 
 let cart = [];
 
-/* CATEGORY SWITCH */
+/* CATEGORY */
 function showCategory(cat) {
     document.querySelectorAll(".category").forEach(c => c.style.display = "none");
     document.getElementById(cat).style.display = "block";
 }
 
-/* ADD TO CART */
+/* ADD */
 function addToCart(name, price) {
     cart.push({name, price});
     displayCart();
 }
 
-/* DISPLAY CART */
+/* DISPLAY */
 function displayCart() {
     let list = document.getElementById("cartList");
     let total = 0;
@@ -203,13 +202,13 @@ function displayCart() {
     document.getElementById("total").innerText = total;
 }
 
-/* REMOVE ITEM */
+/* REMOVE */
 function removeItem(i) {
     cart.splice(i,1);
     displayCart();
 }
 
-/* SEND ORDER → WHATSAPP APP */
+/* SEND ORDER → DIRECT APP */
 function sendOrder() {
 
     let name = document.getElementById("name").value;
@@ -236,8 +235,8 @@ function sendOrder() {
     let encodedMsg = encodeURIComponent(msg);
     let number = "919848305086";
 
-    // ANDROID → DIRECT APP
-    let appUrl = "intent://send?phone=" + number + "&text=" + encodedMsg + "#Intent;scheme=whatsapp;package=com.whatsapp;end";
+    // ✅ Direct WhatsApp App
+    let appUrl = "whatsapp://send?phone=" + number + "&text=" + encodedMsg;
 
     // fallback
     let webUrl = "https://wa.me/" + number + "?text=" + encodedMsg;
@@ -246,7 +245,7 @@ function sendOrder() {
 
     setTimeout(() => {
         window.open(webUrl, "_blank");
-    }, 2000);
+    }, 1500);
 
     cart = [];
     displayCart();
