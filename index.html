@@ -190,6 +190,9 @@ function sendToWhatsApp() {
     var url = "https://wa.me/919848305086?text=" + message;
 
     window.open(url, "_blank");
+
+    // ✅ RESET FORM (IMPORTANT)
+    document.querySelector("form").reset();
 }
 </script>
 
