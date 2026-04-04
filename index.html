@@ -235,16 +235,17 @@ function sendOrder() {
     let encodedMsg = encodeURIComponent(msg);
     let number = "919848305086";
 
-    // ✅ Direct WhatsApp App
+    // ✅ DIRECT APP LINK
     let appUrl = "whatsapp://send?phone=" + number + "&text=" + encodedMsg;
 
+    // ⚡ IMPORTANT CHANGE
+    let newWindow = window.open(appUrl, "_blank");
+
     // fallback
-    let webUrl = "https://wa.me/" + number + "?text=" + encodedMsg;
-
-    window.location.href = appUrl;
-
     setTimeout(() => {
-        window.open(webUrl, "_blank");
+        if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+            window.location.href = "https://wa.me/" + number + "?text=" + encodedMsg;
+        }
     }, 1500);
 
     cart = [];
