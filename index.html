@@ -1,58 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Siri Home Foods</title>
-    <style>
-        input, select {
-    padding: 10px;
-    width: 250px;
-}
-        body {
-            font-family: Arial;
-            margin: 0;
-            text-align: center;
-            background-color: #fff8f0;
-        }
+<title>Siri Home Foods</title>
 
-        header {
-            background-color: orange;
-            color: white;
-            padding: 20px;
-        }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        section {
-            padding: 20px;
-        }
-
-        .btn {
-            background-color: green;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        img {
-            margin: 10px;
-            border-radius: 10px;
-        }
-        img {
-    width: 90%;
-    max-width: 300px;
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+    background: #f5f5f5;
 }
 
+/* HEADER */
+header {
+    background: linear-gradient(to right, orange, red);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+/* SECTION */
+section {
+    padding: 20px;
+}
+
+/* CARD DESIGN */
+.card {
+    background: white;
+    margin: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px gray;
+}
+
+/* IMAGES */
+img {
+    width: 100%;
+    max-width: 250px;
+    border-radius: 10px;
+}
+
+/* BUTTON */
+.btn {
+    background: green;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+/* FORM */
 input, select {
     width: 90%;
     max-width: 300px;
     padding: 10px;
+    margin: 5px;
 }
 
-.btn {
-    display: inline-block;
-    margin-top: 10px;
+/* FOOTER */
+.footer {
+    text-align: center;
+    background: black;
+    color: white;
+    padding: 15px;
 }
-    </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</style>
+
 </head>
 
 <body>
@@ -63,96 +79,119 @@ input, select {
 </header>
 
 <section>
-    <h2>Our Special Items</h2>
+<h2 style="text-align:center;">Our Special Items</h2>
 
-    <img src="images/pickle.jpg" width="500">
-    <img src="images/sweets.jpg" width="500">
-    <img src="images/snacks.jpg" width="500">
+<div class="card">
+<img src="images/pickle.jpg">
+<h3>Mango Pickle</h3>
+<p>₹600/kg</p>
+</div>
 
-    <p>🍱 Pickles | 🍬 Sweets | 🍪 Snacks</p>
+<div class="card">
+<img src="images/sweets.jpg">
+<h3>Laddu</h3>
+<p>₹400/kg</p>
+</div>
+
+<div class="card">
+<img src="images/snacks.jpg">
+<h3>Murukulu</h3>
+<p>₹400/kg</p>
+</div>
+
 </section>
+
 <section>
-    <h2>Place Your Order</h2>
+<h2 style="text-align:center;">Place Your Order</h2>
 
-    <form onsubmit="sendToWhatsApp(); return false;">
+<form onsubmit="sendToWhatsApp(); return false;" class="card">
 
-        <input type="text" id="name" placeholder="Your Name" required><br><br>
+<input type="text" id="name" placeholder="Your Name" required><br>
+<input type="tel" id="phone" placeholder="Phone Number" required><br>
 
-        <input type="tel" id="phone" placeholder="Phone Number" required><br><br>
+<!-- DROPDOWN -->
+<select id="item">
+<option>Mango Pickle</option>
+<option>Gongura Pickle</option>
+<option>Laddu</option>
+<option>Murukulu</option>
+</select><br>
 
-        <select id="item">
-            <option>Mango Pickle</option>
-            <option>Gongura Pickle</option>
-            <option>Laddu</option>
-            <option>Murukulu</option>
-        </select><br><br>
+<!-- RADIO BUTTONS -->
+<p><b>Select Quantity:</b></p>
 
-        <input type="number" id="qty" placeholder="Quantity (kg/box)" required><br><br>
+<input type="radio" name="qty" value="1 kg"> 1 kg  
+<input type="radio" name="qty" value="2 kg"> 2 kg  
+<input type="radio" name="qty" value="5 kg"> 5 kg  
 
-        <button class="btn" type="submit">Submit Order</button>
+<br><br>
 
-    </form>
+<button class="btn" type="submit">Submit Order</button>
+
+</form>
 </section>
-<section>
-    <h2>Order Now</h2>
-    <a class="btn" href="https://wa.me/9848305086?text=Hi%20I%20want%20to%20order%20food">
-        Order on WhatsApp
-    </a>
+
+<section style="text-align:center;">
+<h2>Quick Order</h2>
+<a class="btn" href="https://wa.me/919848305086">Order on WhatsApp</a>
 </section>
-<section>
-    <h2>Pay Now</h2>
 
-    <a class="btn" href="upi://pay?pa=sathishgandhamalla@ybl&pn=SiriHomeFoods&cu=INR">
-        💰 Pay via UPI
-    </a>
-
-    <p>Scan & Pay using PhonePe / Google Pay / Paytm</p>
+<section style="text-align:center;">
+<h2>Pay Now</h2>
+<a class="btn" href="upi://pay?pa=sathishgandhamalla@ybl&pn=SiriHomeFoods&cu=INR">
+💰 Pay via UPI
+</a>
 </section>
-<section>
-    <h2>Location</h2>
 
-    <a class="btn" href="https://www.google.com/maps/place/Chilukuri+nilayam/@17.4065044,78.596126,17z" target="_blank">
-        📍 View Location on Google Maps
-    </a>
+<section style="text-align:center;">
+<h2>Location</h2>
 
-</section>
-<section>
-    <h2>Location</h2>
+<iframe 
+src="https://www.google.com/maps?q=17.4064993,78.5987009&output=embed"
+width="300" height="200" style="border:0;">
+</iframe><br><br>
 
-    <iframe 
-        src="https://www.google.com/maps?q=17.4064993,78.5987009&output=embed"
-        width="300" 
-        height="200" 
-        style="border:0;">
-    </iframe>
+<a class="btn" href="https://www.google.com/maps/place/Chilukuri+nilayam" target="_blank">
+📍 Open in Google Maps
+</a>
 
 </section>
-<section>
-    <h2>Contact Us</h2>
-    <p>📞 9848305086</p>
-</section>
+
+<div class="footer">
+📞 9848305086 <br>
+© Siri Home Foods
+</div>
+
+<!-- FLOAT WHATSAPP -->
+<a href="https://wa.me/919848305086" 
+style="position:fixed; bottom:20px; right:20px; background:green; color:white; padding:15px; border-radius:50%;">
+💬
+</a>
+
 <script>
 function sendToWhatsApp() {
 
     var name = document.getElementById("name").value;
     var phone = document.getElementById("phone").value;
     var item = document.getElementById("item").value;
-    var qty = document.getElementById("qty").value;
+
+    var qty = document.querySelector('input[name="qty"]:checked');
+    if(!qty){
+        alert("Please select quantity");
+        return;
+    }
 
     var message = "Order Details:%0A"
         + "Name: " + name + "%0A"
         + "Phone: " + phone + "%0A"
         + "Item: " + item + "%0A"
-        + "Quantity: " + qty;
+        + "Quantity: " + qty.value;
 
     var url = "https://wa.me/919848305086?text=" + message;
 
     window.open(url, "_blank");
 }
 </script>
-    <a href="https://wa.me/919848305086" 
-   style="position:fixed; bottom:20px; right:20px; background:green; color:white; padding:15px; border-radius:50%;">
-   💬
-</a>
+
 </body>
 </html>
