@@ -202,21 +202,39 @@ function removeItem(i) {
 }
 
 /* CART ORDER */
+<script>
 function sendCart() {
-    if(cart.length == 0){
-        alert("Cart empty");
+
+    if(cart.length === 0){
+        alert("Cart is empty");
         return;
     }
 
-    let msg = "Order:%0A";
+    let message = "🛒 *Siri Home Foods Order* %0A%0A";
 
     cart.forEach(item => {
-        msg += item.name + " ₹" + item.price + "%0A";
+        message += "• " + item.name + " - ₹" + item.price + "%0A";
     });
 
-    window.open("https://wa.me/919848305086?text=" + msg);
-}
+    let phone = "919848305086";
 
+    // MOBILE + DESKTOP SUPPORT
+    let isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    let url;
+
+    if(isMobile){
+        url = "https://wa.me/" + phone + "?text=" + message;
+    } else {
+        url = "https://web.whatsapp.com/send?phone=" + phone + "&text=" + message;
+    }
+
+    window.open(url, "_blank");
+
+    cart = [];
+    displayCart();
+}
+</script>
 /* FORM ORDER */
 function sendForm() {
     let name = document.getElementById("name").value;
