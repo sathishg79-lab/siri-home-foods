@@ -39,6 +39,11 @@ header {
     cursor: pointer;
 }
 
+/* FIX: hide all categories */
+.category {
+    display: none;
+}
+
 /* CARD */
 .card {
     background: white;
@@ -95,8 +100,8 @@ img {
 <button onclick="showCategory('snacks')">Snacks</button>
 </div>
 
-<!-- PICKLES -->
-<div id="pickles" class="category">
+<!-- PICKLES (DEFAULT OPEN) -->
+<div id="pickles" class="category" style="display:block;">
 <div class="card">
 <img src="images/pickle.jpg">
 <h3>Mango Pickle</h3>
@@ -106,7 +111,7 @@ img {
 </div>
 
 <!-- SWEETS -->
-<div id="sweets" class="category" style="display:none;">
+<div id="sweets" class="category">
 <div class="card">
 <img src="images/sweets.jpg">
 <h3>Laddu</h3>
@@ -116,7 +121,7 @@ img {
 </div>
 
 <!-- SNACKS -->
-<div id="snacks" class="category" style="display:none;">
+<div id="snacks" class="category">
 <div class="card">
 <img src="images/snacks.jpg">
 <h3>Murukulu</h3>
@@ -136,8 +141,8 @@ img {
 <div class="card">
 <h3>Place Order</h3>
 
-<input type="text" id="name" placeholder="Your Name" required>
-<input type="tel" id="phone" placeholder="Phone Number" required>
+<input type="text" id="name" placeholder="Your Name" required><br><br>
+<input type="tel" id="phone" placeholder="Phone Number" required><br><br>
 
 <button class="btn" onclick="sendOrder()">Place Order</button>
 </div>
@@ -159,6 +164,9 @@ src="https://www.google.com/maps?q=17.4064993,78.5987009&z=17&output=embed"
 width="100%" height="200" style="border:0;">
 </iframe>
 
+<br><br>
+
+<!-- FIX: open in NEW TAB -->
 <a class="btn" 
 href="https://maps.google.com/?q=17.4064993,78.5987009" 
 target="_blank">
@@ -173,8 +181,9 @@ Open in Google Maps
 © Siri Home Foods
 </div>
 
-<!-- FLOAT WHATSAPP -->
+<!-- WHATSAPP FLOAT -->
 <a href="https://wa.me/919848305086" 
+target="_blank"
 style="position:fixed; bottom:20px; right:20px; background:green; color:white; padding:15px; border-radius:50%;">
 💬
 </a>
@@ -236,7 +245,7 @@ function sendOrder() {
         msg += item.name + " - ₹" + item.price + "%0A";
     });
 
-    window.open("https://wa.me/919848305086?text=" + msg);
+    window.open("https://wa.me/919848305086?text=" + msg, "_blank");
 
     /* CLEAR AFTER ORDER */
     cart = [];
