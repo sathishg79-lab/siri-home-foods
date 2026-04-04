@@ -78,13 +78,26 @@
     </form>
 </section>
 <section>
-    <h2>Menu</h2>
-    <ul style="list-style:none; padding:0;">
-        <li>Mango Pickle - ₹600/kg</li>
-        <li>Gongura Pickle - ₹400/kg</li>
-        <li>Laddu - ₹400/kg</li>
-        <li>Murukulu - ₹400/kg</li>
-    </ul>
+    <h2>Place Your Order</h2>
+
+    <form onsubmit="sendToWhatsApp(); return false;">
+
+        <input type="text" id="name" placeholder="Your Name" required><br><br>
+
+        <input type="tel" id="phone" placeholder="Phone Number" required><br><br>
+
+        <select id="item">
+            <option>Mango Pickle</option>
+            <option>Gongura Pickle</option>
+            <option>Laddu</option>
+            <option>Murukulu</option>
+        </select><br><br>
+
+        <input type="number" id="qty" placeholder="Quantity" required><br><br>
+
+        <button class="btn" type="submit">Submit Order</button>
+
+    </form>
 </section>
 
 <section>
