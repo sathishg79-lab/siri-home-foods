@@ -45,13 +45,34 @@
 <section>
     <h2>Our Special Items</h2>
 
-    <img src="images/pickle.jpg" width="200">
-    <img src="images/sweets.jpg" width="200">
-    <img src="images/snacks.jpg" width="200">
+    <img src="images/pickle.jpg" width="500">
+    <img src="images/sweets.jpg" width="500">
+    <img src="images/snacks.jpg" width="500">
 
     <p>🍱 Pickles | 🍬 Sweets | 🍪 Snacks</p>
 </section>
+<section>
+    <h2>Place Your Order</h2>
 
+    <form onsubmit="sendToWhatsApp(); return false;">
+
+        <input type="text" id="name" placeholder="Your Name" required><br><br>
+
+        <input type="tel" id="phone" placeholder="Phone Number" required><br><br>
+
+        <select id="item">
+            <option>Mango Pickle</option>
+            <option>Gongura Pickle</option>
+            <option>Laddu</option>
+            <option>Murukulu</option>
+        </select><br><br>
+
+        <input type="number" id="qty" placeholder="Quantity (kg/box)" required><br><br>
+
+        <button class="btn" type="submit">Submit Order</button>
+
+    </form>
+</section>
 <section>
     <h2>Menu</h2>
     <ul style="list-style:none; padding:0;">
@@ -92,6 +113,24 @@
     <h2>Contact Us</h2>
     <p>📞 8919102578</p>
 </section>
+<script>
+function sendToWhatsApp() {
 
+    var name = document.getElementById("name").value;
+    var phone = document.getElementById("phone").value;
+    var item = document.getElementById("item").value;
+    var qty = document.getElementById("qty").value;
+
+    var message = "Order Details:%0A"
+        + "Name: " + name + "%0A"
+        + "Phone: " + phone + "%0A"
+        + "Item: " + item + "%0A"
+        + "Quantity: " + qty;
+
+    var url = "https://wa.me/918919102578?text=" + message;
+
+    window.open(url, "_blank");
+}
+</script>
 </body>
 </html>
