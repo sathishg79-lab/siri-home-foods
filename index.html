@@ -6,13 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-    font-family: Arial;
-    margin: 0;
-    background: #f5f5f5;
-}
+body { font-family: Arial; margin: 0; background: #f5f5f5; }
 
-/* HEADER */
 header {
     background: linear-gradient(to right, orange, red);
     color: white;
@@ -20,231 +15,176 @@ header {
     text-align: center;
 }
 
-/* CONTAINER */
-.container {
-    max-width: 600px;
-    margin: auto;
-    padding: 10px;
-}
+.container { max-width: 600px; margin: auto; padding: 10px; }
 
-/* CATEGORY BAR */
 .category-bar {
     display: flex;
-    overflow-x: auto;
     gap: 10px;
+    overflow-x: auto;
     padding: 10px;
 }
 
 .category-bar button {
-    padding: 10px 15px;
+    padding: 10px;
     border: none;
     background: orange;
     color: white;
     border-radius: 20px;
-    cursor: pointer;
 }
 
-/* GRID */
 .category {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
 
-/* CARD */
 .card {
     background: white;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     text-align: center;
 }
 
-/* IMAGE */
-img {
-    width: 100%;
-    border-radius: 10px;
-}
+img { width: 100%; border-radius: 10px; }
 
-/* BUTTON */
 .btn {
     background: green;
     color: white;
-    padding: 12px;
-    border-radius: 5px;
-    display: block;
-    text-align: center;
-    margin-top: 10px;
-    text-decoration: none;
-}
-
-/* FORM */
-input, select {
-    width: 100%;
     padding: 10px;
-    margin: 5px 0;
+    margin-top: 5px;
+    display: block;
+    text-decoration: none;
+    border-radius: 5px;
 }
 
-/* RADIO */
-.radio-group {
-    display: flex;
-    justify-content: space-around;
-}
-
-/* FOOTER */
-.footer {
-    text-align: center;
-    background: black;
-    color: white;
-    padding: 15px;
+.cart {
+    background: white;
+    padding: 10px;
     margin-top: 20px;
+    border-radius: 10px;
 }
-</style>
 
+</style>
 </head>
 
 <body>
 
 <header>
-    <h1>Siri Home Foods</h1>
-    <p>Fresh • Healthy • Homemade</p>
+<h1>Siri Home Foods</h1>
+<p>Fresh • Healthy • Homemade</p>
 </header>
 
 <div class="container">
 
-<!-- CATEGORY BUTTONS -->
+<!-- CATEGORY -->
 <div class="category-bar">
 <button onclick="showCategory('pickles')">Pickles</button>
 <button onclick="showCategory('sweets')">Sweets</button>
 <button onclick="showCategory('snacks')">Snacks</button>
-<button onclick="showCategory('hot')">Hot Items</button>
-<button onclick="showCategory('combo')">Combo Offers</button>
 </div>
 
 <!-- PICKLES -->
 <div id="pickles" class="category">
-<div class="card"><img src="images/pickle.jpg"><h3>Mango Pickle</h3><p>₹600/kg</p></div>
-<div class="card"><h3>Gongura Pickle</h3><p>₹400/kg</p></div>
+<div class="card">
+<img src="images/pickle.jpg">
+<h3>Mango Pickle</h3>
+<p>₹600/kg</p>
+<button class="btn" onclick="addToCart('Mango Pickle',600)">Add to Cart</button>
+</div>
 </div>
 
 <!-- SWEETS -->
 <div id="sweets" class="category" style="display:none;">
-<div class="card"><img src="images/sweets.jpg"><h3>Laddu</h3><p>₹400/kg</p></div>
+<div class="card">
+<img src="images/sweets.jpg">
+<h3>Laddu</h3>
+<p>₹400/kg</p>
+<button class="btn" onclick="addToCart('Laddu',400)">Add to Cart</button>
+</div>
 </div>
 
 <!-- SNACKS -->
 <div id="snacks" class="category" style="display:none;">
-<div class="card"><img src="images/snacks.jpg"><h3>Murukulu</h3><p>₹400/kg</p></div>
-</div>
-
-<!-- HOT ITEMS -->
-<div id="hot" class="category" style="display:none;">
-<div class="card"><h3>Punugulu</h3><p>₹50/plate</p></div>
-<div class="card"><h3>Bajji</h3><p>₹40/plate</p></div>
-</div>
-
-<!-- COMBO -->
-<div id="combo" class="category" style="display:none;">
-<div class="card"><h3>Pickle + Sweet Combo</h3><p>₹900</p></div>
-</div>
-
-<!-- ORDER FORM -->
-<h2 style="text-align:center;">Place Your Order</h2>
-
-<form class="card" onsubmit="sendToWhatsApp(); return false;">
-
-<input type="text" id="name" placeholder="Your Name" required>
-<input type="tel" id="phone" placeholder="Phone Number" required>
-
-<select id="item">
-<option>Mango Pickle</option>
-<option>Gongura Pickle</option>
-<option>Laddu</option>
-<option>Murukulu</option>
-</select>
-
-<p><b>Select Quantity:</b></p>
-
-<div class="radio-group">
-<label><input type="radio" name="qty" value="1 kg">1 kg</label>
-<label><input type="radio" name="qty" value="2 kg">2 kg</label>
-<label><input type="radio" name="qty" value="5 kg">5 kg</label>
-</div>
-
-<button class="btn" type="submit">Submit Order</button>
-
-</form>
-
-<!-- WHATSAPP -->
 <div class="card">
-<a class="btn" href="https://wa.me/919848305086">Order on WhatsApp</a>
+<img src="images/snacks.jpg">
+<h3>Murukulu</h3>
+<p>₹400/kg</p>
+<button class="btn" onclick="addToCart('Murukulu',400)">Add to Cart</button>
+</div>
 </div>
 
-<!-- PAYMENT -->
-<div class="card">
-<a class="btn" href="upi://pay?pa=sathishgandhamalla@ybl&pn=SiriHomeFoods&cu=INR">
-💰 Pay via UPI
-</a>
-</div>
+<!-- CART -->
+<div class="cart">
+<h2>🛒 Cart</h2>
+<ul id="cartList"></ul>
+<p><b>Total: ₹<span id="total">0</span></b></p>
 
-<!-- LOCATION -->
-<div class="card">
-<iframe 
-src="https://www.google.com/maps?q=17.4064993,78.5987009&output=embed"
-width="100%" height="200" style="border:0;">
-</iframe>
-
-<a class="btn" href="https://www.google.com/maps/place/Chilukuri+nilayam" target="_blank">
-📍 Open Location
-</a>
+<button class="btn" onclick="sendCart()">Order via WhatsApp</button>
 </div>
 
 </div>
-
-<div class="footer">
-📞 9848305086 <br>
-© Siri Home Foods
-</div>
-
-<!-- FLOAT WHATSAPP -->
-<a href="https://wa.me/919848305086" 
-style="position:fixed; bottom:20px; right:20px; background:green; color:white; padding:15px; border-radius:50%;">
-💬
-</a>
 
 <script>
+
+let cart = [];
+
 function showCategory(cat) {
-    var categories = document.getElementsByClassName("category");
-    for (var i = 0; i < categories.length; i++) {
+    let categories = document.getElementsByClassName("category");
+    for (let i=0; i<categories.length; i++) {
         categories[i].style.display = "none";
     }
     document.getElementById(cat).style.display = "grid";
 }
 
-function sendToWhatsApp() {
+function addToCart(name, price) {
+    cart.push({name, price});
+    displayCart();
+}
 
-    var name = document.getElementById("name").value;
-    var phone = document.getElementById("phone").value;
-    var item = document.getElementById("item").value;
+function displayCart() {
+    let list = document.getElementById("cartList");
+    list.innerHTML = "";
 
-    var qty = document.querySelector('input[name="qty"]:checked');
-    if(!qty){
-        alert("Please select quantity");
+    let total = 0;
+
+    cart.forEach((item, index) => {
+        total += item.price;
+
+        list.innerHTML += `
+        <li>
+            ${item.name} - ₹${item.price}
+            <button onclick="removeItem(${index})">❌</button>
+        </li>`;
+    });
+
+    document.getElementById("total").innerText = total;
+}
+
+function removeItem(index) {
+    cart.splice(index,1);
+    displayCart();
+}
+
+function sendCart() {
+    if(cart.length == 0){
+        alert("Cart is empty");
         return;
     }
 
-    var message = "Order Details:%0A"
-        + "Name: " + name + "%0A"
-        + "Phone: " + phone + "%0A"
-        + "Item: " + item + "%0A"
-        + "Quantity: " + qty.value;
+    let message = "Order Details:%0A";
 
-    var url = "https://wa.me/919848305086?text=" + message;
+    cart.forEach(item => {
+        message += item.name + " - ₹" + item.price + "%0A";
+    });
+
+    let url = "https://wa.me/919848305086?text=" + message;
 
     window.open(url, "_blank");
 
-    document.querySelector("form").reset();
+    cart = [];
+    displayCart();
 }
+
 </script>
 
 </body>
