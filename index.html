@@ -2,37 +2,29 @@
 <html>
 <head>
 <title>Siri Home Foods</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-    font-family: Arial;
-    margin: 0;
-    background: #f2f2f2;
-}
+body { font-family: Arial; margin: 0; background: #f2f2f2; }
 
-/* HEADER */
 header {
     background: linear-gradient(to right, orange, red);
     color: white;
-    padding: 25px;
+    padding: 20px;
     text-align: center;
 }
 
-/* CONTAINER */
 .container {
     max-width: 500px;
     margin: auto;
     padding: 15px;
 }
 
-/* CATEGORY BUTTONS */
+/* CATEGORY */
 .category-bar {
     display: flex;
-    gap: 10px;
     justify-content: center;
-    margin-bottom: 15px;
+    gap: 10px;
 }
 
 .category-bar button {
@@ -41,30 +33,20 @@ header {
     background: orange;
     color: white;
     border-radius: 20px;
-    cursor: pointer;
-}
-
-/* GRID */
-.category {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
 }
 
 /* CARD */
 .card {
     background: white;
     padding: 15px;
-    border-radius: 12px;
-    text-align: center;
+    margin-top: 15px;
+    border-radius: 10px;
     box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    text-align: center;
 }
 
-/* IMAGE */
 img {
     width: 100%;
-    max-height: 150px;
-    object-fit: cover;
     border-radius: 10px;
 }
 
@@ -73,44 +55,31 @@ img {
     background: green;
     color: white;
     padding: 10px;
-    border-radius: 6px;
+    border-radius: 5px;
     border: none;
     margin-top: 10px;
     cursor: pointer;
 }
 
+/* FORM */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+}
+
 /* CART */
-.cart {
-    background: white;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-}
-
-.cart ul {
-    padding-left: 20px;
-}
-
-.cart button {
-    margin-left: 10px;
-    background: red;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+.cart ul { padding-left: 20px; }
 
 /* FOOTER */
 .footer {
     text-align: center;
-    padding: 15px;
     background: black;
     color: white;
+    padding: 15px;
     margin-top: 20px;
 }
 </style>
-
 </head>
 
 <body>
@@ -129,8 +98,8 @@ img {
 <button onclick="showCategory('snacks')">Snacks</button>
 </div>
 
-<!-- PICKLES -->
-<div id="pickles" class="category">
+<!-- ITEMS -->
+<div id="pickles">
 <div class="card">
 <img src="images/pickle.jpg">
 <h3>Mango Pickle</h3>
@@ -139,33 +108,51 @@ img {
 </div>
 </div>
 
-<!-- SWEETS -->
-<div id="sweets" class="category" style="display:none;">
-<div class="card">
-<img src="images/sweets.jpg">
-<h3>Laddu</h3>
-<p>₹400/kg</p>
-<button class="btn" onclick="addToCart('Laddu',400)">Add to Cart</button>
-</div>
-</div>
-
-<!-- SNACKS -->
-<div id="snacks" class="category" style="display:none;">
-<div class="card">
-<img src="images/snacks.jpg">
-<h3>Murukulu</h3>
-<p>₹400/kg</p>
-<button class="btn" onclick="addToCart('Murukulu',400)">Add to Cart</button>
-</div>
-</div>
-
 <!-- CART -->
-<div class="cart">
+<div class="card cart">
 <h2>🛒 Cart</h2>
 <ul id="cartList"></ul>
 <p><b>Total: ₹<span id="total">0</span></b></p>
 
 <button class="btn" onclick="sendCart()">Order via WhatsApp</button>
+</div>
+
+<!-- ORDER FORM -->
+<div class="card">
+<h3>Place Order Details</h3>
+
+<input type="text" id="name" placeholder="Your Name">
+<input type="tel" id="phone" placeholder="Phone Number">
+
+<select id="qty">
+<option>1 kg</option>
+<option>2 kg</option>
+<option>5 kg</option>
+</select>
+
+<button class="btn" onclick="sendForm()">Send Order</button>
+</div>
+
+<!-- PAYMENT -->
+<div class="card">
+<h3>💰 Payment</h3>
+<a class="btn" href="upi://pay?pa=sathishgandhamalla@ybl&pn=SiriHomeFoods&cu=INR">
+Pay via UPI
+</a>
+</div>
+
+<!-- LOCATION -->
+<div class="card">
+<h3>📍 Location</h3>
+
+<iframe 
+src="https://www.google.com/maps?q=17.4064993,78.5987009&output=embed"
+width="100%" height="200" style="border:0;">
+</iframe>
+
+<a class="btn" href="https://www.google.com/maps/place/Chilukuri+nilayam" target="_blank">
+Open in Google Maps
+</a>
 </div>
 
 </div>
@@ -185,60 +172,59 @@ style="position:fixed; bottom:20px; right:20px; background:green; color:white; p
 
 let cart = [];
 
-/* CATEGORY SWITCH */
-function showCategory(cat) {
-    document.querySelectorAll(".category").forEach(c => c.style.display = "none");
-    document.getElementById(cat).style.display = "grid";
-}
-
-/* ADD TO CART */
+/* ADD CART */
 function addToCart(name, price) {
     cart.push({name, price});
     displayCart();
 }
 
-/* DISPLAY CART */
+/* DISPLAY */
 function displayCart() {
     let list = document.getElementById("cartList");
     let total = 0;
     list.innerHTML = "";
 
-    cart.forEach((item, index) => {
+    cart.forEach((item, i) => {
         total += item.price;
 
-        let li = document.createElement("li");
-        li.innerHTML = item.name + " - ₹" + item.price +
-        " <button onclick='removeItem("+index+")'>❌</button>";
-
-        list.appendChild(li);
+        list.innerHTML += item.name + " - ₹" + item.price +
+        " <button onclick='removeItem("+i+")'>❌</button><br>";
     });
 
     document.getElementById("total").innerText = total;
 }
 
-/* REMOVE ITEM */
-function removeItem(index) {
-    cart.splice(index,1);
+/* REMOVE */
+function removeItem(i) {
+    cart.splice(i,1);
     displayCart();
 }
 
-/* WHATSAPP ORDER */
+/* CART ORDER */
 function sendCart() {
-    if(cart.length === 0){
-        alert("Cart is empty");
+    if(cart.length == 0){
+        alert("Cart empty");
         return;
     }
 
-    let message = "🛒 Siri Home Foods Order%0A%0A";
+    let msg = "Order:%0A";
 
     cart.forEach(item => {
-        message += item.name + " - ₹" + item.price + "%0A";
+        msg += item.name + " ₹" + item.price + "%0A";
     });
 
-    window.open("https://wa.me/919848305086?text=" + message, "_blank");
+    window.open("https://wa.me/919848305086?text=" + msg);
+}
 
-    cart = [];
-    displayCart();
+/* FORM ORDER */
+function sendForm() {
+    let name = document.getElementById("name").value;
+    let phone = document.getElementById("phone").value;
+    let qty = document.getElementById("qty").value;
+
+    let msg = "Order Details:%0AName: "+name+"%0APhone: "+phone+"%0AQty: "+qty;
+
+    window.open("https://wa.me/919848305086?text=" + msg);
 }
 
 </script>
