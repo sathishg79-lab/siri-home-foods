@@ -108,7 +108,13 @@ input {
 
 <header>
 <h1>Siri Home Foods</h1>
-<p>Pickles | Sweets | Snacks</p>
+<p>Pickles | Sweets | Snacks / Hot items</p>
+    <!-- NAVBAR -->
+<div style="background:#fff; padding:10px; text-align:center;">
+<button onclick="showTab('home')">Home</button>
+<button onclick="showTab('about')">About</button>
+<button onclick="showTab('contact')">Contact</button>
+</div>:
 </header>
 
 <div class="container">
@@ -136,6 +142,12 @@ input {
 </div>
 
 <button class="btn" onclick="addToCart('Mango Pickle',600,'p1')">Add to Cart</button>
+</div>
+    <div id="home">
+    <!-- KEEP YOUR EXISTING WEBSITE HERE -->
+</div>
+    <div id="home">
+    <!-- KEEP YOUR EXISTING WEBSITE HERE -->
 </div>
 </div>
 
@@ -349,6 +361,14 @@ function nameInput(){ return document.getElementById("name").value.trim(); }
 function phoneInput(){ return document.getElementById("phone").value.trim(); }
 function addrInput(){ return document.getElementById("address").value.trim(); }
 
+    function showTab(tab){
+
+    document.getElementById("home").style.display="none";
+    document.getElementById("about").style.display="none";
+    document.getElementById("contact").style.display="none";
+
+    document.getElementById(tab).style.display="block";
+}
 </script>
 
 </body>
