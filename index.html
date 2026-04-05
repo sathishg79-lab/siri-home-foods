@@ -6,94 +6,101 @@
 
 <style>
 body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #f4f4f4;
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:#f4f4f4;
 }
 
-/* HEADER */
 header {
-    background: linear-gradient(to right, #ff7a00, #ff2e00);
-    color: white;
-    padding: 25px;
-    text-align: center;
+    background:linear-gradient(to right,#ff7a00,#ff2e00);
+    color:white;
+    text-align:center;
+    padding:25px;
 }
 
-/* CONTAINER */
 .container {
-    max-width: 500px;
-    margin: auto;
-    padding: 15px;
+    max-width:500px;
+    margin:auto;
+    padding:15px;
 }
 
-/* CATEGORY */
 .category-bar {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 10px 0;
+    display:flex;
+    justify-content:center;
+    gap:10px;
 }
 
 .category-bar button {
-    background: #ff9800;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
-    color: white;
-    font-weight: bold;
+    background:#ff9800;
+    border:none;
+    padding:8px 15px;
+    border-radius:20px;
+    color:white;
+    font-weight:bold;
 }
 
 /* CARD */
 .card {
-    background: white;
-    padding: 15px;
-    margin-top: 15px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    text-align: center;
+    background:white;
+    padding:15px;
+    margin-top:15px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    text-align:center;
 }
 
 img {
-    width: 100%;
-    border-radius: 10px;
+    width:100%;
+    border-radius:10px;
 }
 
 /* BUTTON */
 .btn {
-    background: green;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    width: 100%;
-    margin-top: 10px;
-    font-size: 16px;
+    background:#28a745;
+    color:white;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    width:100%;
+    margin-top:10px;
+}
+
+/* QTY */
+.qty {
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:10px;
+}
+
+.qty button {
+    padding:5px 12px;
 }
 
 /* INPUT */
 input {
-    width: 100%;
-    padding: 12px;
-    margin: 6px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+    width:100%;
+    padding:10px;
+    margin:5px 0;
 }
 
-/* CART */
-.cart ul {
-    text-align: left;
-    padding-left: 20px;
+/* SUMMARY */
+.summary {
+    text-align:left;
+    background:#fff3cd;
+    padding:10px;
+    border-radius:10px;
 }
 
-/* FOOTER */
 .footer {
-    text-align: center;
-    background: black;
-    color: white;
-    padding: 15px;
-    margin-top: 20px;
+    text-align:center;
+    background:black;
+    color:white;
+    padding:15px;
+    margin-top:20px;
 }
 </style>
+
 </head>
 
 <body>
@@ -108,77 +115,67 @@ input {
 <!-- CATEGORY -->
 <div class="category-bar">
 <button onclick="showCategory('pickles')">Pickles</button>
-<button onclick="showCategory('sweets')">Sweets</button>
-<button onclick="showCategory('snacks')">Snacks</button>
 </div>
 
-<!-- ITEMS -->
-<div id="pickles" class="category">
+<!-- PRODUCT -->
+<div id="pickles">
 <div class="card">
 <img src="images/pickle.jpg">
 <h3>Mango Pickle</h3>
 <p>₹600/kg</p>
-<button class="btn" onclick="addToCart('Mango Pickle',600)">Add to Cart</button>
-</div>
+
+<div class="qty">
+<button onclick="changeQty(-1)">-</button>
+<span id="qty">0</span>
+<button onclick="changeQty(1)">+</button>
 </div>
 
-<div id="sweets" class="category" style="display:none;">
-<div class="card">
-<img src="images/sweets.jpg">
-<h3>Laddu</h3>
-<p>₹400/kg</p>
-<button class="btn" onclick="addToCart('Laddu',400)">Add to Cart</button>
-</div>
-</div>
-
-<div id="snacks" class="category" style="display:none;">
-<div class="card">
-<img src="images/snacks.jpg">
-<h3>Murukulu</h3>
-<p>₹400/kg</p>
-<button class="btn" onclick="addToCart('Murukulu',400)">Add to Cart</button>
+<button class="btn" onclick="addToCart()">Add to Cart</button>
 </div>
 </div>
 
 <!-- CART -->
-<div class="card cart">
+<div class="card">
 <h2>🛒 Cart</h2>
-<ul id="cartList"></ul>
+<p id="cart"></p>
 <p><b>Total: ₹<span id="total">0</span></b></p>
 </div>
 
-<!-- ORDER -->
+<!-- ADDRESS -->
 <div class="card">
-<h3>Place Order</h3>
+<h3>Delivery Details</h3>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<input id="address" placeholder="Address">
+<button class="btn" onclick="preview()">Preview Order</button>
+</div>
 
-<input type="text" id="name" placeholder="Your Name">
-<input type="tel" id="phone" placeholder="Phone Number">
+<!-- SUMMARY -->
+<div class="card" id="summaryBox" style="display:none;">
+<h3>Order Summary</h3>
+<div id="summary" class="summary"></div>
+<button class="btn" onclick="sendOrder()">Confirm Order</button>
+</div>
 
-<button class="btn" onclick="sendOrder()">Place Order</button>
+<!-- STATUS -->
+<div class="card">
+<h3>📦 Order Status</h3>
+<p id="status">No Order</p>
 </div>
 
 <!-- PAYMENT -->
 <div class="card">
 <h3>💰 Payment</h3>
-<a class="btn" href="upi://pay?pa=sathishgandhamalla@ybl&pn=SiriHomeFoods&cu=INR">
-Pay via UPI
-</a>
+<a id="upiLink" class="btn">Pay via UPI</a>
 </div>
 
-<!-- LOCATION -->
+<!-- MAP -->
 <div class="card">
 <h3>📍 Location</h3>
-
 <iframe 
 src="https://www.google.com/maps?q=17.4064993,78.5987009&z=17&output=embed"
-width="100%" height="200" style="border:0;">
+width="100%" height="200">
 </iframe>
-
-<a class="btn" 
-href="https://maps.google.com/?q=17.4064993,78.5987009" 
-target="_blank">
-Open in Google Maps
-</a>
 </div>
 
 </div>
@@ -188,81 +185,85 @@ Open in Google Maps
 © Siri Home Foods
 </div>
 
-<!-- FLOAT WHATSAPP -->
-<a href="https://wa.me/919848305086" 
-style="position:fixed; bottom:20px; right:20px; background:#25D366; color:white; padding:15px; border-radius:50%;">
+<!-- FLOAT -->
+<a href="https://wa.me/919848305086"
+style="position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:15px;border-radius:50%;">
 💬
 </a>
 
 <script>
 
-let cart = [];
+let qty = 0;
+let price = 600;
+let total = 0;
 
-/* CATEGORY SWITCH */
-function showCategory(cat) {
-    document.querySelectorAll(".category").forEach(c => c.style.display = "none");
-    document.getElementById(cat).style.display = "block";
+/* QTY */
+function changeQty(val){
+    qty += val;
+    if(qty<0) qty=0;
+    document.getElementById("qty").innerText = qty;
 }
 
-/* ADD CART */
-function addToCart(name, price) {
-    cart.push({name, price});
-    displayCart();
-}
-
-/* DISPLAY CART */
-function displayCart() {
-    let list = document.getElementById("cartList");
-    let total = 0;
-    list.innerHTML = "";
-
-    cart.forEach((item, i) => {
-        total += item.price;
-
-        list.innerHTML += "<li>" + item.name + " - ₹" + item.price +
-        " <button onclick='removeItem("+i+")'>❌</button></li>";
-    });
-
+/* ADD */
+function addToCart(){
+    total = qty * price;
+    document.getElementById("cart").innerText = "Mango Pickle x "+qty;
     document.getElementById("total").innerText = total;
 }
 
-/* REMOVE */
-function removeItem(i) {
-    cart.splice(i,1);
-    displayCart();
+/* PREVIEW */
+function preview(){
+    let name = nameInput();
+    let phone = phoneInput();
+    let address = addrInput();
+
+    let html = `
+    Name: ${name}<br>
+    Phone: ${phone}<br>
+    Address: ${address}<br><br>
+    Mango Pickle x ${qty}<br>
+    Total: ₹${total}
+    `;
+
+    document.getElementById("summary").innerHTML = html;
+    document.getElementById("summaryBox").style.display="block";
+
+    // update UPI amount
+    document.getElementById("upiLink").href =
+    "upi://pay?pa=sathishgandhamalla@ybl&pn=SiriHomeFoods&am="+total+"&cu=INR";
 }
 
-/* SEND ORDER */
-function sendOrder() {
-function sendOrder() {
+/* SEND */
+function sendOrder(){
 
-    let name = document.getElementById("name").value;
-    let phone = document.getElementById("phone").value;
+    let msg = `🧾 Siri Home Foods Order
 
-    if(cart.length === 0){
-        alert("Cart empty");
-        return;
-    }
+Name: ${nameInput()}
+Phone: ${phoneInput()}
+Address: ${addrInput()}
 
-    let msg = "🛒 Siri Home Foods Order%0A%0A";
-    msg += "Name: " + name + "%0A";
-    msg += "Phone: " + phone + "%0A%0A";
+Mango Pickle x ${qty}
+Total ₹${total}`;
 
-    cart.forEach(item => {
-        msg += item.name + " - ₹" + item.price + "%0A";
-    });
+    let url = "https://api.whatsapp.com/send?phone=919848305086&text="+encodeURIComponent(msg);
 
-    // ✅ THIS IS THE FIX
-    let url = "https://api.whatsapp.com/send?phone=919848305086&text=" + msg;
-    window.open(url, "_blank");
+    window.open(url,"_blank");
 
-    // CLEAR DATA AFTER ORDER
-    cart = [];
-    displayCart();
-    document.getElementById("name").value = "";
-    document.getElementById("phone").value = "";
+    document.getElementById("status").innerText="Order Sent ✅";
+
+    // reset
+    qty=0;
+    total=0;
+    document.getElementById("qty").innerText=0;
+    document.getElementById("cart").innerText="";
+    document.getElementById("total").innerText=0;
+    document.querySelectorAll("input").forEach(i=>i.value="");
 }
 
+/* HELPERS */
+function nameInput(){ return document.getElementById("name").value; }
+function phoneInput(){ return document.getElementById("phone").value; }
+function addrInput(){ return document.getElementById("address").value; }
 
 </script>
 
