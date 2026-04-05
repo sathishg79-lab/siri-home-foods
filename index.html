@@ -234,6 +234,7 @@ function removeItem(i) {
 
 /* SEND ORDER */
 function sendOrder() {
+function sendOrder() {
 
     let name = document.getElementById("name").value;
     let phone = document.getElementById("phone").value;
@@ -251,16 +252,17 @@ function sendOrder() {
         msg += item.name + " - ₹" + item.price + "%0A";
     });
 
-    let url = "https://wa.me/919848305086?text=" + msg;
+    // ✅ THIS IS THE FIX
+    let url = "https://api.whatsapp.com/send?phone=919848305086&text=" + msg;
+    window.open(url, "_blank");
 
-    window.location.href = url;   // 🔥 mobile-friendly redirect
-
-    /* CLEAR FORM */
+    // CLEAR DATA AFTER ORDER
     cart = [];
     displayCart();
     document.getElementById("name").value = "";
     document.getElementById("phone").value = "";
 }
+
 
 </script>
 
