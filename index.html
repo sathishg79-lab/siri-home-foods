@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body { font-family:Arial; margin:0; background:#f4f4f4; }
+body { margin:0; font-family:Arial; background:#f4f4f4; }
 
 header {
     background:linear-gradient(to right,orange,red);
@@ -21,16 +21,15 @@ header {
     display:flex;
     justify-content:center;
     gap:10px;
-    margin:10px;
+    margin:10px 0;
 }
 
 .menu button {
-    padding:8px 15px;
-    border:none;
     background:orange;
-    color:white;
+    border:none;
+    padding:8px 15px;
     border-radius:20px;
-    cursor:pointer;
+    color:white;
 }
 
 /* CARD */
@@ -51,17 +50,34 @@ img { width:100%; border-radius:10px; }
     padding:10px;
     border:none;
     border-radius:5px;
-    margin-top:10px;
     width:100%;
+    margin-top:10px;
 }
 
-.qty { display:flex; justify-content:center; gap:10px; margin-top:10px; }
+/* QTY */
+.qty {
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:10px;
+}
 
 .qty button { padding:5px 10px; }
 
-input { width:100%; padding:10px; margin:5px 0; }
+/* INPUT */
+input {
+    width:100%;
+    padding:10px;
+    margin:5px 0;
+}
 
-.footer { text-align:center; background:black; color:white; padding:10px; }
+/* FOOTER */
+.footer {
+    text-align:center;
+    background:black;
+    color:white;
+    padding:10px;
+}
 </style>
 
 </head>
@@ -140,13 +156,44 @@ input { width:100%; padding:10px; margin:5px 0; }
 <p><b>Total: ₹<span id="total">0</span></b></p>
 </div>
 
-<!-- ORDER -->
+<!-- ADDRESS -->
 <div class="card">
-<input id="name" placeholder="Name">
-<input id="phone" placeholder="Phone">
-<input id="address" placeholder="Address">
+<h3>Delivery Details</h3>
+<input id="name" placeholder="Your Name">
+<input id="phone" placeholder="Phone Number">
+<input id="address" placeholder="Full Address">
 
-<button class="btn" onclick="sendOrder()">Place Order</button>
+<button class="btn" onclick="previewOrder()">Preview Order</button>
+</div>
+
+<!-- SUMMARY -->
+<div class="card" id="summaryBox" style="display:none;">
+<h3>Order Summary</h3>
+<div id="summary"></div>
+<button class="btn" onclick="sendOrder()">Confirm Order</button>
+</div>
+
+<!-- PAYMENT -->
+<div class="card">
+<h3>💰 Payment</h3>
+<a id="upiLink" class="btn">Pay via UPI</a>
+</div>
+
+<!-- MAP -->
+<div class="card">
+<h3>📍 Location</h3>
+
+<iframe 
+src="https://www.google.com/maps?q=17.4064993,78.5987009&z=17&output=embed"
+width="100%" height="200" style="border:0;">
+</iframe>
+
+<a class="btn" 
+href="https://maps.google.com/?q=17.4064993,78.5987009" 
+target="_blank">
+Open in Google Maps
+</a>
+
 </div>
 
 </div>
@@ -155,16 +202,21 @@ input { width:100%; padding:10px; margin:5px 0; }
 📞 9848305086
 </div>
 
+<!-- FLOAT WHATSAPP -->
+<a href="https://api.whatsapp.com/send?phone=919848305086"
+style="position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:15px;border-radius:50%;">
+💬
+</a>
+
 <script>
 
 let cart = [];
 
-/* MENU SWITCH */
+/* MENU */
 function showMenu(menu){
     document.getElementById("pickles").style.display="none";
     document.getElementById("sweets").style.display="none";
     document.getElementById("snacks").style.display="none";
-
     document.getElementById(menu).style.display="block";
 }
 
@@ -176,9 +228,8 @@ function changeQty(id,val){
     el.innerText = qty;
 }
 
-/* ADD */
+/* ADD CART */
 function addToCart(name, price, id){
-
     let qty = parseInt(document.getElementById("qty_"+id).innerText);
 
     if(qty === 0){
@@ -206,22 +257,45 @@ function displayCart(){
     document.getElementById("total").innerText = total;
 }
 
-/* SEND */
-function sendOrder(){
+/* PREVIEW */
+function previewOrder(){
+
+    let name = document.getElementById("name").value;
+    let phone = document.getElementById("phone").value;
+    let address = document.getElementById("address").value;
+
+    if(!name || !phone || !address){
+        alert("Fill all details");
+        return;
+    }
 
     if(cart.length === 0){
         alert("Cart empty");
         return;
     }
 
-    let name = document.getElementById("name").value;
-    let phone = document.getElementById("phone").value;
-    let address = document.getElementById("address").value;
+    let summary = "";
+    let total = 0;
+
+    cart.forEach(item=>{
+        let itemTotal = item.price * item.qty;
+        total += itemTotal;
+        summary += `${item.name} x ${item.qty} = ₹${itemTotal}<br>`;
+    });
+
+    summary += `<br><b>Total: ₹${total}</b>`;
+
+    document.getElementById("summary").innerHTML = summary;
+    document.getElementById("summaryBox").style.display="block";
+
+    document.getElementById("upiLink").href =
+    "upi://pay?pa=sathishgandhamalla@ybl&pn=SiriHomeFoods&am="+total+"&cu=INR";
+}
+
+/* SEND */
+function sendOrder(){
 
     let msg = "🛒 Order%0A%0A";
-    msg += "Name: "+name+"%0A";
-    msg += "Phone: "+phone+"%0A";
-    msg += "Address: "+address+"%0A%0A";
 
     cart.forEach(item=>{
         msg += item.name+" x "+item.qty+" = ₹"+(item.price*item.qty)+"%0A";
@@ -232,6 +306,7 @@ function sendOrder(){
     cart = [];
     displayCart();
     document.querySelectorAll("input").forEach(i=>i.value="");
+    document.getElementById("summaryBox").style.display="none";
 }
 
 </script>
