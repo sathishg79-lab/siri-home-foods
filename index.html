@@ -5,62 +5,87 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body { font-family: Arial; margin: 0; background: #f2f2f2; }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f4f4;
+}
 
+/* HEADER */
 header {
-    background: linear-gradient(to right, orange, red);
+    background: linear-gradient(to right, #ff7a00, #ff2e00);
     color: white;
-    padding: 20px;
+    padding: 25px;
     text-align: center;
 }
 
+/* CONTAINER */
 .container {
     max-width: 500px;
     margin: auto;
     padding: 15px;
 }
 
+/* CATEGORY */
 .category-bar {
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 10px;
+    margin: 10px 0;
 }
 
 .category-bar button {
-    padding: 8px 15px;
+    background: #ff9800;
     border: none;
-    background: orange;
-    color: white;
+    padding: 8px 15px;
     border-radius: 20px;
-    cursor: pointer;
+    color: white;
+    font-weight: bold;
 }
 
-.category { display: none; }
-
+/* CARD */
 .card {
     background: white;
     padding: 15px;
     margin-top: 15px;
-    border-radius: 10px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     text-align: center;
 }
 
-img { width: 100%; border-radius: 10px; }
+img {
+    width: 100%;
+    border-radius: 10px;
+}
 
+/* BUTTON */
 .btn {
     background: green;
     color: white;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 12px;
     border: none;
+    border-radius: 8px;
+    width: 100%;
     margin-top: 10px;
-    cursor: pointer;
+    font-size: 16px;
 }
 
-.cart ul { padding-left: 20px; text-align:left; }
+/* INPUT */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
 
+/* CART */
+.cart ul {
+    text-align: left;
+    padding-left: 20px;
+}
+
+/* FOOTER */
 .footer {
     text-align: center;
     background: black;
@@ -80,15 +105,15 @@ img { width: 100%; border-radius: 10px; }
 
 <div class="container">
 
-<!-- CATEGORY BUTTONS -->
+<!-- CATEGORY -->
 <div class="category-bar">
 <button onclick="showCategory('pickles')">Pickles</button>
 <button onclick="showCategory('sweets')">Sweets</button>
 <button onclick="showCategory('snacks')">Snacks</button>
 </div>
 
-<!-- PICKLES -->
-<div id="pickles" class="category" style="display:block;">
+<!-- ITEMS -->
+<div id="pickles" class="category">
 <div class="card">
 <img src="images/pickle.jpg">
 <h3>Mango Pickle</h3>
@@ -97,8 +122,7 @@ img { width: 100%; border-radius: 10px; }
 </div>
 </div>
 
-<!-- SWEETS -->
-<div id="sweets" class="category">
+<div id="sweets" class="category" style="display:none;">
 <div class="card">
 <img src="images/sweets.jpg">
 <h3>Laddu</h3>
@@ -107,8 +131,7 @@ img { width: 100%; border-radius: 10px; }
 </div>
 </div>
 
-<!-- SNACKS -->
-<div id="snacks" class="category">
+<div id="snacks" class="category" style="display:none;">
 <div class="card">
 <img src="images/snacks.jpg">
 <h3>Murukulu</h3>
@@ -127,8 +150,10 @@ img { width: 100%; border-radius: 10px; }
 <!-- ORDER -->
 <div class="card">
 <h3>Place Order</h3>
-<input type="text" id="name" placeholder="Your Name"><br><br>
-<input type="tel" id="phone" placeholder="Phone Number"><br><br>
+
+<input type="text" id="name" placeholder="Your Name">
+<input type="tel" id="phone" placeholder="Phone Number">
+
 <button class="btn" onclick="sendOrder()">Place Order</button>
 </div>
 
@@ -149,8 +174,6 @@ src="https://www.google.com/maps?q=17.4064993,78.5987009&z=17&output=embed"
 width="100%" height="200" style="border:0;">
 </iframe>
 
-<br><br>
-
 <a class="btn" 
 href="https://maps.google.com/?q=17.4064993,78.5987009" 
 target="_blank">
@@ -166,8 +189,8 @@ Open in Google Maps
 </div>
 
 <!-- FLOAT WHATSAPP -->
-<a href="whatsapp://send?phone=919848305086"
-style="position:fixed; bottom:20px; right:20px; background:green; color:white; padding:15px; border-radius:50%;">
+<a href="https://wa.me/919848305086" 
+style="position:fixed; bottom:20px; right:20px; background:#25D366; color:white; padding:15px; border-radius:50%;">
 💬
 </a>
 
@@ -175,19 +198,19 @@ style="position:fixed; bottom:20px; right:20px; background:green; color:white; p
 
 let cart = [];
 
-/* CATEGORY */
+/* CATEGORY SWITCH */
 function showCategory(cat) {
     document.querySelectorAll(".category").forEach(c => c.style.display = "none");
     document.getElementById(cat).style.display = "block";
 }
 
-/* ADD */
+/* ADD CART */
 function addToCart(name, price) {
     cart.push({name, price});
     displayCart();
 }
 
-/* DISPLAY */
+/* DISPLAY CART */
 function displayCart() {
     let list = document.getElementById("cartList");
     let total = 0;
@@ -195,6 +218,7 @@ function displayCart() {
 
     cart.forEach((item, i) => {
         total += item.price;
+
         list.innerHTML += "<li>" + item.name + " - ₹" + item.price +
         " <button onclick='removeItem("+i+")'>❌</button></li>";
     });
@@ -208,7 +232,7 @@ function removeItem(i) {
     displayCart();
 }
 
-/* SEND ORDER → DIRECT APP */
+/* SEND ORDER */
 function sendOrder() {
 
     let name = document.getElementById("name").value;
@@ -219,37 +243,23 @@ function sendOrder() {
         return;
     }
 
-    if(name === "" || phone === ""){
-        alert("Name & Phone enter cheyyandi");
-        return;
-    }
-
-    let msg = "🛒 Siri Home Foods Order\n\n";
-    msg += "Name: " + name + "\n";
-    msg += "Phone: " + phone + "\n\n";
+    let msg = "🛒 Siri Home Foods Order%0A%0A";
+    msg += "Name: " + name + "%0A";
+    msg += "Phone: " + phone + "%0A%0A";
 
     cart.forEach(item => {
-        msg += item.name + " - ₹" + item.price + "\n";
+        msg += item.name + " - ₹" + item.price + "%0A";
     });
 
-    let encodedMsg = encodeURIComponent(msg);
-    let number = "919848305086";
+    let url = "https://wa.me/919848305086?text=" + msg;
 
-    // ✅ DIRECT APP LINK
-    let appUrl = "whatsapp://send?phone=" + number + "&text=" + encodedMsg;
+    window.location.href = url;   // 🔥 mobile-friendly redirect
 
-    // ⚡ IMPORTANT CHANGE
-    let newWindow = window.open(appUrl, "_blank");
-
-    // fallback
-    setTimeout(() => {
-        if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-            window.location.href = "https://wa.me/" + number + "?text=" + encodedMsg;
-        }
-    }, 1500);
-
+    /* CLEAR FORM */
     cart = [];
     displayCart();
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
 }
 
 </script>
