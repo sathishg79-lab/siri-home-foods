@@ -16,6 +16,24 @@ header {
 
 .container { max-width:500px; margin:auto; padding:10px; }
 
+/* MENU */
+.menu {
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin:10px;
+}
+
+.menu button {
+    padding:8px 15px;
+    border:none;
+    background:orange;
+    color:white;
+    border-radius:20px;
+    cursor:pointer;
+}
+
+/* CARD */
 .card {
     background:white;
     padding:15px;
@@ -45,6 +63,7 @@ input { width:100%; padding:10px; margin:5px 0; }
 
 .footer { text-align:center; background:black; color:white; padding:10px; }
 </style>
+
 </head>
 
 <body>
@@ -56,49 +75,62 @@ input { width:100%; padding:10px; margin:5px 0; }
 
 <div class="container">
 
-<!-- PRODUCT 1 -->
+<!-- MENU -->
+<div class="menu">
+<button onclick="showMenu('pickles')">Pickles</button>
+<button onclick="showMenu('sweets')">Sweets</button>
+<button onclick="showMenu('snacks')">Snacks</button>
+</div>
+
+<!-- PICKLES -->
+<div id="pickles">
 <div class="card">
 <img src="images/pickle.jpg">
 <h3>Mango Pickle</h3>
 <p>₹600/kg</p>
 
 <div class="qty">
-<button onclick="changeQty('pickle',-1)">-</button>
-<span id="qty_pickle">0</span>
-<button onclick="changeQty('pickle',1)">+</button>
+<button onclick="changeQty('p1',-1)">-</button>
+<span id="qty_p1">0</span>
+<button onclick="changeQty('p1',1)">+</button>
 </div>
 
-<button class="btn" onclick="addToCart('Mango Pickle',600,'pickle')">Add to Cart</button>
+<button class="btn" onclick="addToCart('Mango Pickle',600,'p1')">Add to Cart</button>
+</div>
 </div>
 
-<!-- PRODUCT 2 -->
+<!-- SWEETS -->
+<div id="sweets" style="display:none;">
 <div class="card">
 <img src="images/sweets.jpg">
 <h3>Laddu</h3>
 <p>₹400/kg</p>
 
 <div class="qty">
-<button onclick="changeQty('laddu',-1)">-</button>
-<span id="qty_laddu">0</span>
-<button onclick="changeQty('laddu',1)">+</button>
+<button onclick="changeQty('s1',-1)">-</button>
+<span id="qty_s1">0</span>
+<button onclick="changeQty('s1',1)">+</button>
 </div>
 
-<button class="btn" onclick="addToCart('Laddu',400,'laddu')">Add to Cart</button>
+<button class="btn" onclick="addToCart('Laddu',400,'s1')">Add to Cart</button>
+</div>
 </div>
 
-<!-- PRODUCT 3 -->
+<!-- SNACKS -->
+<div id="snacks" style="display:none;">
 <div class="card">
 <img src="images/snacks.jpg">
 <h3>Murukulu</h3>
 <p>₹400/kg</p>
 
 <div class="qty">
-<button onclick="changeQty('snacks',-1)">-</button>
-<span id="qty_snacks">0</span>
-<button onclick="changeQty('snacks',1)">+</button>
+<button onclick="changeQty('n1',-1)">-</button>
+<span id="qty_n1">0</span>
+<button onclick="changeQty('n1',1)">+</button>
 </div>
 
-<button class="btn" onclick="addToCart('Murukulu',400,'snacks')">Add to Cart</button>
+<button class="btn" onclick="addToCart('Murukulu',400,'n1')">Add to Cart</button>
+</div>
 </div>
 
 <!-- CART -->
@@ -127,7 +159,16 @@ input { width:100%; padding:10px; margin:5px 0; }
 
 let cart = [];
 
-/* CHANGE QTY */
+/* MENU SWITCH */
+function showMenu(menu){
+    document.getElementById("pickles").style.display="none";
+    document.getElementById("sweets").style.display="none";
+    document.getElementById("snacks").style.display="none";
+
+    document.getElementById(menu).style.display="block";
+}
+
+/* QTY */
 function changeQty(id,val){
     let el = document.getElementById("qty_"+id);
     let qty = parseInt(el.innerText) + val;
@@ -135,7 +176,7 @@ function changeQty(id,val){
     el.innerText = qty;
 }
 
-/* ADD TO CART */
+/* ADD */
 function addToCart(name, price, id){
 
     let qty = parseInt(document.getElementById("qty_"+id).innerText);
@@ -165,7 +206,7 @@ function displayCart(){
     document.getElementById("total").innerText = total;
 }
 
-/* SEND ORDER */
+/* SEND */
 function sendOrder(){
 
     if(cart.length === 0){
