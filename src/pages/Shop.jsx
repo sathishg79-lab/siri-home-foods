@@ -174,6 +174,7 @@ const Shop = () => {
 
           <div className="cart-bubble">
             <Link to="/contact" className="admin-link">📞 Contact Us</Link>
+            <Link to="/admin" className="admin-link">⚙️ Admin Portal</Link>
             <Link to="/cart" className="cart-link">
               🛒 <span>My Cart</span>
               <span className="cart-count">{cart.length}</span>
@@ -191,7 +192,6 @@ const Shop = () => {
           <NavLink to="/" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Order Online</NavLink>
           <NavLink to="/faq" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>FAQ</NavLink>
           <NavLink to="/contact" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Contact Us</NavLink>
-          <NavLink to="/admin" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Admin</NavLink>
         </div>
       </nav>
 
