@@ -24,10 +24,10 @@ async function verifyPassword(plain, storedHash) {
   return attempt === storedHash;
 }
 
-// ─── Default password (plain-text used ONLY to seed hash on first run) ──────
-// After first login the hash is stored in LocalStorage and this value is never
-// used again. Change this string to set a new default password for fresh installs.
-const DEFAULT_PASSWORD = 'siri@2024!';
+// ─── Default admin password hash (used only to seed storage on first run) ───
+// This value is a SHA-256 digest. It is never stored or displayed as plain text.
+const DEFAULT_PASSWORD_HASH = 'fe9bda56393603e024b056efd2317d2ae264a4c56a61130cb75f834c523c9302';
+const ADMIN_RECOVERY_PHONE = '919848305086';
 
 const ADMIN_HASH_KEY  = 'shf_admin_pw_hash';
 const ADMIN_AUTH_KEY  = 'shf_admin_auth';
@@ -94,6 +94,11 @@ const AdminDashboard = () => {
   const [pwForm,     setPwForm]     = useState({ current: '', newPw: '', confirm: '' });
   const [showPwForm, setShowPwForm] = useState({ current: false, newPw: false, confirm: false });
   const [pwMsg,      setPwMsg]      = useState({ type: '', text: '' });
+  const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
+  const [forgotPhone, setForgotPhone] = useState('');
+  const [forgotNewPw, setForgotNewPw] = useState('');
+  const [forgotConfirm, setForgotConfirm] = useState('');
+  const [forgotMsg, setForgotMsg] = useState({ type: '', text: '' });
 
   // ── The wrong hash that was hardcoded in a previous version of this file ──
   const OLD_BROKEN_HASH = 'b2e05427f2d50474a38c8bbcada1a7dc65cb5f52d7b1b42ff5a77a76c4ff0f7c';
@@ -105,18 +110,36 @@ const AdminDashboard = () => {
     const stored = localStorage.getItem(ADMIN_HASH_KEY);
     // Seed if missing OR replace the old wrong hardcoded hash automatically.
     if (!stored || stored === OLD_BROKEN_HASH) {
-      hashPassword(DEFAULT_PASSWORD).then(hash => {
-        localStorage.setItem(ADMIN_HASH_KEY, hash);
-      });
+      localStorage.setItem(ADMIN_HASH_KEY, DEFAULT_PASSWORD_HASH);
     }
   }, []);
 
-  // ── Reset to default password (emergency access) ───────────────────────────
-  const resetToDefault = async () => {
-    const hash = await hashPassword(DEFAULT_PASSWORD);
+  const handleForgotPasswordReset = async (e) => {
+    e.preventDefault();
+    setForgotMsg({ type: '', text: '' });
+
+    const normalized = forgotPhone.replace(/\D/g, '');
+    const savedPhone = contactInfo?.phone ? contactInfo.phone.replace(/\D/g, '') : '';
+    if (normalized !== ADMIN_RECOVERY_PHONE && normalized !== savedPhone) {
+      return setForgotMsg({ type: 'error', text: 'Mobile number does not match the registered admin recovery number.' });
+    }
+
+    if (forgotNewPw.length < 8) {
+      return setForgotMsg({ type: 'error', text: 'Password must be at least 8 characters long.' });
+    }
+
+    if (forgotNewPw !== forgotConfirm) {
+      return setForgotMsg({ type: 'error', text: 'Passwords do not match.' });
+    }
+
+    const hash = await hashPassword(forgotNewPw);
     localStorage.setItem(ADMIN_HASH_KEY, hash);
     localStorage.removeItem(ADMIN_AUTH_KEY);
-    alert(`Password has been reset to the default:\n\n  siri@2024!\n\nPlease log in now.`);
+
+    setForgotMsg({ type: 'success', text: 'Password has been reset successfully. Please log in with your new password.' });
+    setForgotPhone('');
+    setForgotNewPw('');
+    setForgotConfirm('');
   };
 
   // ── Login ──────────────────────────────────────────────────────────────────
@@ -403,9 +426,9 @@ const AdminDashboard = () => {
           </form>
 
           <div style={{ marginTop: '25px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-            <p style={{ fontSize: '0.82rem', color: '#aaa', marginBottom: '10px' }}>Locked out?</p>
+            <p style={{ fontSize: '0.82rem', color: '#aaa', marginBottom: '10px' }}>Forgot your password?</p>
             <button
-              onClick={resetToDefault}
+              onClick={() => setForgotPasswordMode(v => !v)}
               style={{
                 background: 'none', border: '1px solid #ddd', borderRadius: '8px',
                 padding: '8px 16px', fontSize: '0.85rem', color: '#888',
@@ -414,11 +437,46 @@ const AdminDashboard = () => {
               onMouseOver={e => e.target.style.borderColor = 'var(--primary)'}
               onMouseOut={e => e.target.style.borderColor = '#ddd'}
             >
-              🔑 Reset to Default Password
+              🔑 Reset password using your registered mobile number
             </button>
-            <p style={{ fontSize: '0.75rem', color: '#bbb', marginTop: '8px' }}>
-              Resets to: <code>siri@2024!</code>
-            </p>
+            {forgotPasswordMode && (
+              <form onSubmit={handleForgotPasswordReset} style={{ marginTop: '18px', display: 'grid', gap: '12px' }}>
+                <input
+                  type="tel"
+                  placeholder="Registered mobile number"
+                  value={forgotPhone}
+                  onChange={e => setForgotPhone(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="New password"
+                  value={forgotNewPw}
+                  onChange={e => setForgotNewPw(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                  minLength={8}
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={forgotConfirm}
+                  onChange={e => setForgotConfirm(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                  minLength={8}
+                  required
+                />
+                {forgotMsg.text && (
+                  <p style={{ color: forgotMsg.type === 'error' ? '#c0392b' : '#27ae60', marginBottom: '0', fontSize: '0.9rem' }}>
+                    {forgotMsg.text}
+                  </p>
+                )}
+                <button type="submit" className="btn-primary" style={{ width: '100%' }}>
+                  Reset Password
+                </button>
+              </form>
+            )}
           </div>
 
           <Link to="/" className="back-link" style={{ justifyContent: 'center', marginTop: '15px' }}>
@@ -427,7 +485,6 @@ const AdminDashboard = () => {
         </div>
       </div>
     );
-  }
 
   // ─────────────────────────────────────────────────────────────────────────
   // DASHBOARD
