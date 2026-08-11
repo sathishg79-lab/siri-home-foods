@@ -165,14 +165,19 @@ export const StoreProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : defaultBannerSettings;
   });
 
+  // Do not overwrite live data with a visitor's cached/default data while the
+  // initial Firebase snapshot is still loading.
+  const [firebaseReady, setFirebaseReady] = useState(false);
+
   // ── Firebase Sync & Persist ──────────────────────────────────────────────
   // Sync products to Firebase and listen for real-time updates
   useEffect(() => {
     localStorage.setItem('shf_products', JSON.stringify(products));
+    if (!firebaseReady) return;
     set(ref(db, 'siteData/products'), products).catch(err => 
       console.warn('Failed to sync products to Firebase:', err)
     );
-  }, [products]);
+  }, [products, firebaseReady]);
 
   // Sync cart to localStorage (cart is local-only, not synced to Firebase)
   useEffect(() => {
@@ -182,42 +187,47 @@ export const StoreProvider = ({ children }) => {
   // Sync categories to Firebase and listen for real-time updates
   useEffect(() => {
     localStorage.setItem('shf_categories', JSON.stringify(categories));
+    if (!firebaseReady) return;
     set(ref(db, 'siteData/categories'), categories).catch(err => 
       console.warn('Failed to sync categories to Firebase:', err)
     );
-  }, [categories]);
+  }, [categories, firebaseReady]);
 
   // Sync contact info to Firebase and listen for real-time updates
   useEffect(() => {
     localStorage.setItem('shf_contact', JSON.stringify(contactInfo));
+    if (!firebaseReady) return;
     set(ref(db, 'siteData/contactInfo'), contactInfo).catch(err => 
       console.warn('Failed to sync contactInfo to Firebase:', err)
     );
-  }, [contactInfo]);
+  }, [contactInfo, firebaseReady]);
 
   // Sync site logo to Firebase
   useEffect(() => {
     localStorage.setItem('shf_site_logo', JSON.stringify(siteLogo));
+    if (!firebaseReady) return;
     set(ref(db, 'siteData/siteLogo'), siteLogo).catch(err => 
       console.warn('Failed to sync siteLogo to Firebase:', err)
     );
-  }, [siteLogo]);
+  }, [siteLogo, firebaseReady]);
 
   // Sync banners to Firebase
   useEffect(() => {
     localStorage.setItem('shf_banners', JSON.stringify(banners));
+    if (!firebaseReady) return;
     set(ref(db, 'siteData/banners'), banners).catch(err => 
       console.warn('Failed to sync banners to Firebase:', err)
     );
-  }, [banners]);
+  }, [banners, firebaseReady]);
 
   // Sync banner settings to Firebase
   useEffect(() => {
     localStorage.setItem('shf_banner_settings', JSON.stringify(bannerSettings));
+    if (!firebaseReady) return;
     set(ref(db, 'siteData/bannerSettings'), bannerSettings).catch(err => 
       console.warn('Failed to sync bannerSettings to Firebase:', err)
     );
-  }, [bannerSettings]);
+  }, [bannerSettings, firebaseReady]);
 
   // Try to load remote site data from Firebase (with real-time updates)
   useEffect(() => {
@@ -233,6 +243,7 @@ export const StoreProvider = ({ children }) => {
           const migratedData = migrateProducts(data);
           setProducts(migratedData);
         }
+        setFirebaseReady(true);
       },
       (err) => console.warn('Failed to load products from Firebase:', err)
     );
@@ -449,10 +460,23 @@ export const StoreProvider = ({ children }) => {
 
   useEffect(() => { 
     localStorage.setItem('shf_orders', JSON.stringify(orders));
+    if (!firebaseReady) return;
     set(ref(db, 'siteData/orders'), orders).catch(err => 
       console.warn('Failed to sync orders to Firebase:', err)
     );
-  }, [orders]);
+  }, [orders, firebaseReady]);
+
+  const publishSiteData = async () => {
+    await set(ref(db, 'siteData'), {
+      products,
+      categories,
+      contactInfo,
+      banners,
+      bannerSettings,
+      siteLogo,
+      orders,
+    });
+  };
 
   const saveOrder = (orderData) => {
     const order = {
@@ -525,7 +549,8 @@ export const StoreProvider = ({ children }) => {
       processCheckout,
       banners, addBanner, deleteBanner, updateBanner,
       bannerSettings, updateBannerSettings,
-      orders, saveOrder, updateOrderStatus, getOrderHistory
+      orders, saveOrder, updateOrderStatus, getOrderHistory,
+      publishSiteData
     }}>
       {children}
     </StoreContext.Provider>

@@ -38,8 +38,9 @@ const AdminDashboard = () => {
     products, addProduct, deleteProduct, editProduct,
     categories, addCategory, deleteCategory,
     contactInfo, updateContactInfo, addSocialMedia, deleteSocialMedia, updateSocialMedia,
-    banners, addBanner, deleteBanner, updateBanner, bannerSettings, updateBannerSettings
-  , siteLogo, setSiteLogo } = useContext(StoreContext);
+    banners, addBanner, deleteBanner, updateBanner, bannerSettings, updateBannerSettings,
+    siteLogo, setSiteLogo, publishSiteData
+  } = useContext(StoreContext);
 
   // ── Auth ──────────────────────────────────────────────────────────────────
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -404,20 +405,11 @@ const AdminDashboard = () => {
   const publishToServer = async () => {
     if (!window.confirm('Publish current admin data to server (this will update the live site data)?')) return;
     try {
-      const payload = { products, categories, contactInfo, banners, bannerSettings, siteLogo };
-      const res = await fetch('/.netlify/functions/updateSiteData', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-      });
-      const j = await res.json();
-      if (!res.ok) {
-        console.error(j);
-        alert('Publish failed: ' + (j.error && typeof j.error === 'string' ? j.error : JSON.stringify(j.error)));
-        return;
-      }
-      alert('Published successfully. The repo was updated. Allow a minute for GitHub Pages to rebuild.');
+      await publishSiteData();
+      alert('Published successfully. The main website updates automatically.');
     } catch (err) {
       console.error(err);
-      alert('Publish failed. Check console for details.');
+      alert('Publish failed. Please check your Firebase connection and try again.');
     }
   };
 
