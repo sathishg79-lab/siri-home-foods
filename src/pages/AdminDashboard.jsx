@@ -350,6 +350,77 @@ const AdminDashboard = () => {
     }
   };
 
+  // ── Export / Import site data (for publishing local admin edits) ───────
+  const handleExportData = () => {
+    try {
+      const payload = {
+        products,
+        categories,
+        contactInfo,
+        banners,
+        bannerSettings,
+        siteLogo
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sirihomefoods-data.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to export data. Check the console for details.');
+    }
+  };
+
+  const handleImportFile = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (data.products) localStorage.setItem('shf_products', JSON.stringify(data.products));
+        if (data.categories) localStorage.setItem('shf_categories', JSON.stringify(data.categories));
+        if (data.contactInfo) localStorage.setItem('shf_contact', JSON.stringify(data.contactInfo));
+        if (data.banners) localStorage.setItem('shf_banners', JSON.stringify(data.banners));
+        if (data.bannerSettings) localStorage.setItem('shf_banner_settings', JSON.stringify(data.bannerSettings));
+        if (data.siteLogo) localStorage.setItem('shf_site_logo', JSON.stringify(data.siteLogo));
+        alert('Imported data saved to localStorage. The app will reload to apply changes.');
+        window.location.reload();
+      } catch (err) {
+        console.error(err);
+        alert('Invalid JSON file. Import failed.');
+      }
+    };
+    reader.readAsText(file);
+    // reset input so same file can be re-selected if needed
+    e.target.value = '';
+  };
+
+  const publishToServer = async () => {
+    if (!window.confirm('Publish current admin data to server (this will update the live site data)?')) return;
+    try {
+      const payload = { products, categories, contactInfo, banners, bannerSettings, siteLogo };
+      const res = await fetch('/.netlify/functions/updateSiteData', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+      });
+      const j = await res.json();
+      if (!res.ok) {
+        console.error(j);
+        alert('Publish failed: ' + (j.error && typeof j.error === 'string' ? j.error : JSON.stringify(j.error)));
+        return;
+      }
+      alert('Published successfully. The repo was updated. Allow a minute for GitHub Pages to rebuild.');
+    } catch (err) {
+      console.error(err);
+      alert('Publish failed. Check console for details.');
+    }
+  };
+
   const handleProductImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -517,6 +588,15 @@ const AdminDashboard = () => {
             </button>
           ))}
         </nav>
+
+        <div style={{ padding: '12px' }}>
+          <button className="btn" onClick={publishToServer} style={{ width: '100%', marginBottom: '8px', background: '#2d9cdb', color: '#fff' }}>Publish To Server</button>
+          <button className="btn" onClick={handleExportData} style={{ width: '100%', marginBottom: '8px' }}>Export Site Data</button>
+          <label className="btn" style={{ display: 'block', width: '100%', textAlign: 'center', cursor: 'pointer' }}>
+            Import Site Data
+            <input type="file" accept="application/json" onChange={handleImportFile} style={{ display: 'none' }} />
+          </label>
+        </div>
 
         <button className="sidebar-logout" onClick={handleLogout}>
           <LogOut size={18} /> Logout

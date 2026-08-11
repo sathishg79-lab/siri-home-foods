@@ -19,7 +19,7 @@ function loadRazorpayScript() {
 
 const Cart = () => {
   const {
-    cart, removeFromCart, clearCart, updateCartQty, processCheckout, siteLogo
+    cart, removeFromCart, clearCart, updateCartQty, processCheckout, siteLogo, saveOrder
   } = useContext(StoreContext);
 
   const [checkoutData, setCheckoutData] = useState({ name: '', phone: '', address: '' });
@@ -50,6 +50,9 @@ const Cart = () => {
       alert('Some items exceed available stock. Please review.');
       return;
     }
+
+    // Save order to history
+    saveOrder({ ...checkoutData, paymentMethod: 'whatsapp' });
 
     setOrderPlaced(true);
     const number = '919912142247';
@@ -99,6 +102,7 @@ const Cart = () => {
       handler: function(response) {
         const success = processCheckout();
         if (success) {
+          saveOrder({ ...checkoutData, paymentMethod: 'razorpay', paymentId: response.razorpay_payment_id });
           setOrderPlaced(true);
           alert(`✅ Payment Successful!\nPayment ID: ${response.razorpay_payment_id}\n\nThank you, ${checkoutData.name}!`);
           setTimeout(() => {

@@ -48,7 +48,9 @@ const ProductCard = ({ product, language: initialLanguage = 'english' }) => {
       <div className="image-container">
         <img
           src={product.image}
-          alt={product.name}
+          alt={displayName}
+          loading="lazy"
+          decoding="async"
           onError={e => { e.target.src = 'https://via.placeholder.com/300x200?text=' + encodeURIComponent(product.name); }}
         />
         <div

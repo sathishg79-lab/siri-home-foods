@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { db, ref, get, set, onValue, remove } from '../firebaseConfig';
 
 export const StoreContext = createContext();
 
@@ -153,13 +154,7 @@ export const StoreProvider = ({ children }) => {
     }
   });
 
-  // Persist
-  useEffect(() => { localStorage.setItem('shf_products',   JSON.stringify(products));    }, [products]);
-  useEffect(() => { localStorage.setItem('shf_cart',       JSON.stringify(cart));         }, [cart]);
-  useEffect(() => { localStorage.setItem('shf_categories', JSON.stringify(categories));   }, [categories]);
-  useEffect(() => { localStorage.setItem('shf_contact',    JSON.stringify(contactInfo));  }, [contactInfo]);
-  useEffect(() => { localStorage.setItem('shf_site_logo',  JSON.stringify(siteLogo));   }, [siteLogo]);
-  // Banners
+  // ── Banners ───────────────────────────────────────────────────────────
   const [banners, setBanners] = useState(() => {
     const saved = localStorage.getItem('shf_banners');
     return saved ? JSON.parse(saved) : defaultBanners;
@@ -170,8 +165,185 @@ export const StoreProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : defaultBannerSettings;
   });
 
-  useEffect(() => { localStorage.setItem('shf_banners',         JSON.stringify(banners));        }, [banners]);
-  useEffect(() => { localStorage.setItem('shf_banner_settings', JSON.stringify(bannerSettings)); }, [bannerSettings]);
+  // ── Firebase Sync & Persist ──────────────────────────────────────────────
+  // Sync products to Firebase and listen for real-time updates
+  useEffect(() => {
+    localStorage.setItem('shf_products', JSON.stringify(products));
+    set(ref(db, 'siteData/products'), products).catch(err => 
+      console.warn('Failed to sync products to Firebase:', err)
+    );
+  }, [products]);
+
+  // Sync cart to localStorage (cart is local-only, not synced to Firebase)
+  useEffect(() => {
+    localStorage.setItem('shf_cart', JSON.stringify(cart));
+  }, [cart]);
+
+  // Sync categories to Firebase and listen for real-time updates
+  useEffect(() => {
+    localStorage.setItem('shf_categories', JSON.stringify(categories));
+    set(ref(db, 'siteData/categories'), categories).catch(err => 
+      console.warn('Failed to sync categories to Firebase:', err)
+    );
+  }, [categories]);
+
+  // Sync contact info to Firebase and listen for real-time updates
+  useEffect(() => {
+    localStorage.setItem('shf_contact', JSON.stringify(contactInfo));
+    set(ref(db, 'siteData/contactInfo'), contactInfo).catch(err => 
+      console.warn('Failed to sync contactInfo to Firebase:', err)
+    );
+  }, [contactInfo]);
+
+  // Sync site logo to Firebase
+  useEffect(() => {
+    localStorage.setItem('shf_site_logo', JSON.stringify(siteLogo));
+    set(ref(db, 'siteData/siteLogo'), siteLogo).catch(err => 
+      console.warn('Failed to sync siteLogo to Firebase:', err)
+    );
+  }, [siteLogo]);
+
+  // Sync banners to Firebase
+  useEffect(() => {
+    localStorage.setItem('shf_banners', JSON.stringify(banners));
+    set(ref(db, 'siteData/banners'), banners).catch(err => 
+      console.warn('Failed to sync banners to Firebase:', err)
+    );
+  }, [banners]);
+
+  // Sync banner settings to Firebase
+  useEffect(() => {
+    localStorage.setItem('shf_banner_settings', JSON.stringify(bannerSettings));
+    set(ref(db, 'siteData/bannerSettings'), bannerSettings).catch(err => 
+      console.warn('Failed to sync bannerSettings to Firebase:', err)
+    );
+  }, [bannerSettings]);
+
+  // Try to load remote site data from Firebase (with real-time updates)
+  useEffect(() => {
+    let mounted = true;
+
+    // Set up real-time listeners for products, categories, and contactInfo
+    const unsubscribeProducts = onValue(
+      ref(db, 'siteData/products'),
+      (snapshot) => {
+        if (!mounted) return;
+        const data = snapshot.val();
+        if (data) {
+          const migratedData = migrateProducts(data);
+          setProducts(migratedData);
+        }
+      },
+      (err) => console.warn('Failed to load products from Firebase:', err)
+    );
+
+    const unsubscribeCategories = onValue(
+      ref(db, 'siteData/categories'),
+      (snapshot) => {
+        if (!mounted) return;
+        const data = snapshot.val();
+        if (data && Array.isArray(data)) {
+          setCategories(data);
+        }
+      },
+      (err) => console.warn('Failed to load categories from Firebase:', err)
+    );
+
+    const unsubscribeContactInfo = onValue(
+      ref(db, 'siteData/contactInfo'),
+      (snapshot) => {
+        if (!mounted) return;
+        const data = snapshot.val();
+        if (data) {
+          setContactInfo(normalizeContact(data));
+        }
+      },
+      (err) => console.warn('Failed to load contactInfo from Firebase:', err)
+    );
+
+    const unsubscribeBanners = onValue(
+      ref(db, 'siteData/banners'),
+      (snapshot) => {
+        if (!mounted) return;
+        const data = snapshot.val();
+        if (data && Array.isArray(data)) {
+          setBanners(data);
+        }
+      },
+      (err) => console.warn('Failed to load banners from Firebase:', err)
+    );
+
+    const unsubscribeBannerSettings = onValue(
+      ref(db, 'siteData/bannerSettings'),
+      (snapshot) => {
+        if (!mounted) return;
+        const data = snapshot.val();
+        if (data) {
+          setBannerSettings(data);
+        }
+      },
+      (err) => console.warn('Failed to load bannerSettings from Firebase:', err)
+    );
+
+    const unsubscribeSiteLogo = onValue(
+      ref(db, 'siteData/siteLogo'),
+      (snapshot) => {
+        if (!mounted) return;
+        const data = snapshot.val();
+        if (data) {
+          setSiteLogo(data);
+        }
+      },
+      (err) => console.warn('Failed to load siteLogo from Firebase:', err)
+    );
+
+    const unsubscribeOrders = onValue(
+      ref(db, 'siteData/orders'),
+      (snapshot) => {
+        if (!mounted) return;
+        const data = snapshot.val();
+        if (data && Array.isArray(data)) {
+          setOrders(data);
+        }
+      },
+      (err) => console.warn('Failed to load orders from Firebase:', err)
+    );
+
+    // Cleanup subscriptions on unmount
+    return () => {
+      mounted = false;
+      unsubscribeProducts();
+      unsubscribeCategories();
+      unsubscribeContactInfo();
+      unsubscribeBanners();
+      unsubscribeBannerSettings();
+      unsubscribeSiteLogo();
+      unsubscribeOrders();
+    };
+  }, []);
+
+  // Try to load remote site data from serverless function (if available)
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('/.netlify/functions/getSiteData');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!mounted || !data) return;
+        if (data.products) setProducts(migrateProducts(data.products));
+        if (data.categories) setCategories(data.categories);
+        if (data.contactInfo) setContactInfo(normalizeContact(data.contactInfo));
+        if (data.banners) setBanners(data.banners);
+        if (data.bannerSettings) setBannerSettings(data.bannerSettings || defaultBannerSettings);
+        if (data.siteLogo) setSiteLogo(data.siteLogo);
+      } catch (err) {
+        // ignore; remote data optional
+        // console.warn('Failed to load remote site data', err);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   // ── Cart ──────────────────────────────────────────────────────────────────
   // cartKey = productId + variant weight e.g. "p1-500g"
@@ -269,6 +441,53 @@ export const StoreProvider = ({ children }) => {
   const updateBanner = (id, b) => setBanners(prev => prev.map(item => item.id === id ? { ...b, id } : item));
   const updateBannerSettings = (s) => setBannerSettings(prev => ({ ...prev, ...s }));
 
+  // ── Order History ────────────────────────────────────────────────────────
+  const [orders, setOrders] = useState(() => {
+    const saved = localStorage.getItem('shf_orders');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => { 
+    localStorage.setItem('shf_orders', JSON.stringify(orders));
+    set(ref(db, 'siteData/orders'), orders).catch(err => 
+      console.warn('Failed to sync orders to Firebase:', err)
+    );
+  }, [orders]);
+
+  const saveOrder = (orderData) => {
+    const order = {
+      id: `order_${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      customerName: orderData.name,
+      phone: orderData.phone,
+      address: orderData.address,
+      items: cart.map(item => ({
+        productId: item.id,
+        productName: item.displayName || item.name,
+        variant: item.selectedVariant,
+        qty: item.qty,
+        price: item.selectedVariant?.price || item.price
+      })),
+      total: cart.reduce((sum, item) => {
+        const price = item.selectedVariant?.price || item.price || 0;
+        return sum + (price * item.qty);
+      }, 0),
+      status: 'pending', // pending, confirmed, dispatched, delivered
+      paymentMethod: orderData.paymentMethod || 'whatsapp'
+    };
+    setOrders(prev => [order, ...prev]);
+    return order;
+  };
+
+  const updateOrderStatus = (orderId, status) => {
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+  };
+
+  const getOrderHistory = (phone) => {
+    if (!phone) return orders;
+    return orders.filter(o => o.phone === phone);
+  };
+
   // ── Checkout ──────────────────────────────────────────────────────────────
   const processCheckout = () => {
     // Group cart by product id to sum qtys
@@ -305,7 +524,8 @@ export const StoreProvider = ({ children }) => {
       updateContactInfo, addSocialMedia, updateSocialMedia, deleteSocialMedia,
       processCheckout,
       banners, addBanner, deleteBanner, updateBanner,
-      bannerSettings, updateBannerSettings
+      bannerSettings, updateBannerSettings,
+      orders, saveOrder, updateOrderStatus, getOrderHistory
     }}>
       {children}
     </StoreContext.Provider>

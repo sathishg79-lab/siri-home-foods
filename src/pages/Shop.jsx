@@ -174,7 +174,6 @@ const Shop = () => {
 
           <div className="cart-bubble">
             <Link to="/contact" className="admin-link">📞 Contact Us</Link>
-            <Link to="/admin" className="admin-link">⚙️ Admin Portal</Link>
             <Link to="/cart" className="cart-link">
               🛒 <span>My Cart</span>
               <span className="cart-count">{cart.length}</span>

@@ -32,7 +32,12 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build && cp CNAME docs/CNAME
+        run: |
+          npm run build
+          # Clear docs and copy the production build into docs/ for GitHub Pages
+          rm -rf docs/* || true
+          cp -r dist/* docs/
+          cp CNAME docs/CNAME
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

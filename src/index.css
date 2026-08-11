@@ -136,6 +136,34 @@ a {
   overflow: hidden;
 }
 
+/* Small topbar shown across pages (contains admin link and quick actions) */
+.site-topbar {
+  background: linear-gradient(90deg, var(--header-green-1), var(--header-green-2));
+  color: white;
+  padding: 8px 5%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+.site-topbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+  justify-content: space-between;
+}
+.topbar-pill, .admin-link.small {
+  background: rgba(255,255,255,0.12);
+  padding: 6px 12px;
+  border-radius: 16px;
+  color: white;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.18);
+}
+.topbar-center { flex: 0 0 auto; }
+.topbar-right { display: flex; gap: 10px; align-items: center; }
+.site-topbar .cart-link.small { background: rgba(255,255,255,0.18); padding: 6px 10px; border-radius: 20px; }
+.site-topbar .cart-count { background: var(--primary); color: white; width: 18px; height: 18px; display: inline-grid; place-items: center; border-radius: 50%; margin-left: 6px; font-size: 0.78rem; }
+
 .main-header::before {
   content: '';
   position: absolute;
@@ -2391,6 +2419,93 @@ a {
   .sidebar-logout { justify-content: center; padding: 14px; }
   .admin-main { padding: 20px; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ─── Enhanced Mobile Responsiveness (All Devices) ──────── */
+@media (max-width: 640px) {
+  /* Touch-friendly button sizes */
+  button, .btn-primary, .btn-secondary, .btn-add {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improved spacing on small screens */
+  body { font-size: 14px; }
+  
+  /* Better form inputs */
+  input, textarea, select {
+    font-size: 16px; /* Prevents auto-zoom on iOS */
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  /* Product cards stack better */
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  /* Navbar optimized for mobile */
+  .site-topbar-inner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+  }
+  
+  .topbar-left, .topbar-right, .topbar-center {
+    flex: 1 1 auto;
+    min-width: 100px;
+  }
+  
+  /* Cart improvements */
+  .cart-main-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .cart-item-card {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  /* Checkout buttons side-by-side on small screens */
+  .payment-buttons {
+    flex-direction: row;
+  }
+  
+  .btn-whatsapp, .btn-razorpay {
+    flex: 1;
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens */
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .cart-item-image, .item-image {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .hero h1 { font-size: 1.8rem; }
+  .hero p { font-size: 0.9rem; }
+  
+  /* Stack payment buttons vertically on very small screens */
+  .payment-buttons {
+    flex-direction: column;
+  }
+  
+  .btn-whatsapp, .btn-razorpay {
+    width: 100%;
+  }
+  
+  /* Improve readability */
+  .page-hero { padding: 30px 16px; }
+  main { padding: 16px; }
 }
 
 /* ─── Contact Page Premium Redesign ───────────────────────── */
