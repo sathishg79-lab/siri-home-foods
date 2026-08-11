@@ -34,9 +34,7 @@ jobs:
       - name: Build
         run: |
           npm run build
-          # Clear docs and copy the production build into docs/ for GitHub Pages
-          rm -rf docs/* || true
-          cp -r dist/* docs/
+          # Vite is configured to write the production build directly to docs/.
           cp CNAME docs/CNAME
 
       - name: Upload artifact
