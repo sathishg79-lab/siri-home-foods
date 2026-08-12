@@ -2868,3 +2868,20 @@ a {
   .contact-premium-container { margin-top: -40px; }
   .contact-premium-grid { grid-template-columns: 1fr; }
 }
+/* Shown only while the app is loading, or if a browser cannot load JavaScript. */
+.site-loading-fallback {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  color: #3b2418;
+  font-family: Arial, sans-serif;
+  background: #fffaf2;
+}
+
+.site-loading-fallback img { width: 112px; max-height: 112px; object-fit: contain; }
+.site-loading-fallback h1, .site-loading-fallback p { margin: 0; }
+.site-loading-fallback a { padding: 12px 18px; border-radius: 8px; background: #b54a24; color: #fff; text-decoration: none; font-weight: 700; }

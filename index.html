@@ -64,7 +64,14 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main class="site-loading-fallback" role="status" aria-live="polite">
+        <img src="/logo.png" alt="Siri Home Foods" onerror="this.style.display='none'" />
+        <h1>Siri Home Foods</h1>
+        <p>Loading our homemade pickles, sweets and snacks…</p>
+        <a href="https://wa.me/919912142247">Order on WhatsApp</a>
+      </main>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
