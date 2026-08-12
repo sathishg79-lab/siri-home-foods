@@ -425,14 +425,21 @@ const AdminDashboard = () => {
   };
 
   // ── Banner Handlers ────────────────────────────────────────────────────────
-  const handleBannerSubmit = (e) => {
+  const handleBannerSubmit = async (e) => {
     e.preventDefault();
-    if (editingBannerId) updateBanner(editingBannerId, bannerForm);
-    else addBanner(bannerForm);
+    const result = editingBannerId
+      ? await updateBanner(editingBannerId, bannerForm)
+      : await addBanner(bannerForm);
+
+    if (!result?.ok) {
+      alert('Banner could not be published. Please check your internet connection and try again.');
+      return;
+    }
     
     setBannerForm({ title: '', subtitle: '', image: '' });
     setIsAddingBanner(false);
     setEditingBannerId(null);
+    alert('Banner published successfully. It will now appear on all devices.');
   };
 
   const openEditBanner = (b) => {

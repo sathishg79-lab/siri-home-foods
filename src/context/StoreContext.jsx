@@ -453,9 +453,27 @@ export const StoreProvider = ({ children }) => {
   };
 
   // ── Banners ───────────────────────────────────────────────────────────────
-  const addBanner = (b) => setBanners(prev => [...prev, { ...b, id: `bn_${Date.now()}` }]);
-  const deleteBanner = (id) => setBanners(prev => prev.filter(b => b.id !== id));
-  const updateBanner = (id, b) => setBanners(prev => prev.map(item => item.id === id ? { ...b, id } : item));
+  const saveBanners = async (nextBanners) => {
+    setBanners(nextBanners);
+    try {
+      // Save immediately so changes made in the admin portal appear on every
+      // device, even if the general background synchronisation is unavailable.
+      await set(ref(db, 'siteData/banners'), nextBanners);
+      return { ok: true };
+    } catch (error) {
+      console.error('Failed to publish banners to Firebase:', error);
+      return { ok: false, error };
+    }
+  };
+
+  const addBanner = (banner) => saveBanners([
+    ...banners,
+    { ...banner, id: `bn_${Date.now()}` },
+  ]);
+  const deleteBanner = (id) => saveBanners(banners.filter(banner => banner.id !== id));
+  const updateBanner = (id, banner) => saveBanners(
+    banners.map(item => item.id === id ? { ...banner, id } : item)
+  );
   const updateBannerSettings = (s) => setBannerSettings(prev => ({ ...prev, ...s }));
 
   // ── Order History ────────────────────────────────────────────────────────
