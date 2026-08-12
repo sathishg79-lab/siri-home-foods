@@ -92,7 +92,8 @@ const defaultBannerSettings = {
 
 // ── Migrate old products (no variants) to variant format ──────────────────
 function migrateProducts(saved) {
-  return saved.map(p => {
+  if (!Array.isArray(saved)) return defaultProducts;
+  return saved.filter(Boolean).map(p => {
     // Don't migrate if it's explicitly marked as a single-price product
     if (p.noVariants) return p;
 
@@ -111,24 +112,32 @@ function migrateProducts(saved) {
   });
 }
 
+function readLocalStorage(key, fallback, transform = value => value) {
+  try {
+    const saved = localStorage.getItem(key);
+    return saved ? transform(JSON.parse(saved)) : fallback;
+  } catch (error) {
+    console.warn(`Ignoring invalid saved data for ${key}:`, error);
+    localStorage.removeItem(key);
+    return fallback;
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────
 export const StoreProvider = ({ children }) => {
   // Products
   const [products, setProducts] = useState(() => {
-    const saved = localStorage.getItem('shf_products');
-    return saved ? migrateProducts(JSON.parse(saved)) : defaultProducts;
+    return readLocalStorage('shf_products', defaultProducts, migrateProducts);
   });
 
   // Cart  — each item carries { ...product, selectedVariant: {weight, price}, qty }
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem('shf_cart');
-    return saved ? JSON.parse(saved) : [];
+    return readLocalStorage('shf_cart', [], value => Array.isArray(value) ? value : []);
   });
 
   // Categories
   const [categories, setCategories] = useState(() => {
-    const saved = localStorage.getItem('shf_categories');
-    return saved ? JSON.parse(saved) : defaultCategories;
+    return readLocalStorage('shf_categories', defaultCategories, value => Array.isArray(value) ? value : defaultCategories);
   });
 
   // Contact Info
@@ -140,8 +149,7 @@ export const StoreProvider = ({ children }) => {
   };
 
   const [contactInfo, setContactInfo] = useState(() => {
-    const saved = localStorage.getItem('shf_contact');
-    return saved ? normalizeContact(JSON.parse(saved)) : defaultContact;
+    return readLocalStorage('shf_contact', defaultContact, normalizeContact);
   });
 
   // Site logo (editable in admin) — default to public /logo.png
@@ -156,13 +164,11 @@ export const StoreProvider = ({ children }) => {
 
   // ── Banners ───────────────────────────────────────────────────────────
   const [banners, setBanners] = useState(() => {
-    const saved = localStorage.getItem('shf_banners');
-    return saved ? JSON.parse(saved) : defaultBanners;
+    return readLocalStorage('shf_banners', defaultBanners, value => Array.isArray(value) ? value : defaultBanners);
   });
 
   const [bannerSettings, setBannerSettings] = useState(() => {
-    const saved = localStorage.getItem('shf_banner_settings');
-    return saved ? JSON.parse(saved) : defaultBannerSettings;
+    return readLocalStorage('shf_banner_settings', defaultBannerSettings, value => value && typeof value === 'object' ? value : defaultBannerSettings);
   });
 
   // Do not overwrite live data with a visitor's cached/default data while the
@@ -239,7 +245,7 @@ export const StoreProvider = ({ children }) => {
       (snapshot) => {
         if (!mounted) return;
         const data = snapshot.val();
-        if (data) {
+        if (Array.isArray(data)) {
           const migratedData = migrateProducts(data);
           setProducts(migratedData);
         }
